@@ -7,57 +7,73 @@ export interface Profile {
   created_at: string;
 }
 
+export type AnswerValue = string | string[] | number;
+
 export interface QuizResponse {
   id: string;
   user_id: string;
-  answers: Record<string, string>;
+  answers: Record<string, AnswerValue>;
   tag_vector: TagVector;
   completed_at: string;
 }
 
 export type TagKey =
-  | "ai_safety"
-  | "alignment"
-  | "mentorship"
-  | "community"
-  | "biorisk"
-  | "governance"
-  | "ea_general"
-  | "career_change"
-  | "research"
-  | "policy"
-  | "technical"
-  | "ops_fundraising";
+  // Cause areas
+  | "ai_safety" | "biorisk" | "global_health" | "animal_welfare" | "nuclear" | "climate" | "mental_health"
+  // AIS sub-areas
+  | "alignment" | "interpretability" | "governance" | "field_building" | "ai_comms" | "biosec_research" | "global_poverty"
+  // Theory of change
+  | "toc_direct" | "toc_policy" | "toc_advocacy" | "toc_movement" | "toc_earning" | "toc_research" | "toc_community"
+  // Work mode
+  | "work_start_org" | "work_contribute" | "work_independent" | "work_advise" | "work_volunteer" | "work_co_founder"
+  // Impact
+  | "imp_xrisk" | "imp_research" | "imp_policy" | "imp_community" | "imp_talent" | "imp_funding" | "imp_narratives" | "imp_tools" | "imp_institutions" | "imp_near_term"
+  // Skills
+  | "skill_ml" | "skill_interp" | "skill_writing" | "skill_policy" | "skill_fundraising" | "skill_ops" | "skill_mentoring" | "skill_community" | "skill_philosophy" | "skill_economics" | "skill_legal" | "skill_software" | "skill_data" | "skill_design"
+  // Bottlenecks
+  | "need_collaborators" | "need_funding" | "need_time" | "need_skills" | "need_direction" | "need_feedback" | "need_network" | "need_motivation"
+  // Work style (slider values 0–1)
+  | "style_in_person" | "style_collaborative" | "style_rigorous" | "style_systems" | "style_specialist" | "style_extroverted" | "style_launch"
+  // Engagement level
+  | "ais_engagement";
 
 export type TagVector = Partial<Record<TagKey, number>>;
 
 export interface MatchResult {
   profile: Profile;
-  score: number; // 0–1 cosine similarity
+  score: number;
   commonTags: TagKey[];
 }
 
-// ── Quiz config types ──────────────────────────────────────────────────────────
+// ── Quiz config types ─────────────────────────────────────────────────────────
+
+export type QuestionType = "dropdown" | "multi_select" | "slider" | "free_text";
 
 export interface QuizOption {
   label: string;
   value: string;
-  /** Tag weights applied when this option is chosen (0–1 scale) */
-  weights: Partial<Record<TagKey, number>>;
-  /** If set, jump to the question with this id instead of proceeding linearly */
-  nextQuestionId?: string;
+  weights?: Partial<Record<TagKey, number>>;
 }
 
 export interface QuizQuestion {
   id: string;
+  /** Visual section header shown when this question is first in its section */
+  section: string;
   text: string;
-  /** Optional helper text shown beneath the question */
+  type: QuestionType;
   hint?: string;
-  options: QuizOption[];
+  /** If true, Next is disabled until an answer is provided */
+  required?: boolean;
+  placeholder?: string;
+  options?: QuizOption[];
+  /** Slider: left-side label */
+  sliderMin?: string;
+  /** Slider: right-side label */
+  sliderMax?: string;
+  /** Slider: the TagKey whose value is set directly from the slider (0–1) */
+  sliderTag?: TagKey;
 }
 
 export interface QuizConfig {
   questions: QuizQuestion[];
-  /** First question id – defaults to questions[0].id */
-  startId?: string;
 }
