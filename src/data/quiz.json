@@ -1,0 +1,253 @@
+{
+  "startId": "q_focus",
+  "questions": [
+    {
+      "id": "q_focus",
+      "text": "Which cause area do you care most about right now?",
+      "hint": "Pick the one that best represents where you want to spend your energy.",
+      "options": [
+        {
+          "label": "AI Safety & Alignment",
+          "value": "ai_safety_focus",
+          "weights": { "ai_safety": 1.0, "alignment": 0.8, "technical": 0.5 },
+          "nextQuestionId": "q_ai_role"
+        },
+        {
+          "label": "Biosecurity & Pandemic Preparedness",
+          "value": "bio_focus",
+          "weights": { "biorisk": 1.0, "governance": 0.4, "policy": 0.4 },
+          "nextQuestionId": "q_bio_role"
+        },
+        {
+          "label": "AI Governance & Policy",
+          "value": "governance_focus",
+          "weights": { "governance": 1.0, "policy": 0.9, "ai_safety": 0.4 },
+          "nextQuestionId": "q_govpolicy_role"
+        },
+        {
+          "label": "Effective Altruism (general)",
+          "value": "ea_focus",
+          "weights": { "ea_general": 1.0, "community": 0.5 },
+          "nextQuestionId": "q_ea_involvement"
+        }
+      ]
+    },
+
+    {
+      "id": "q_ai_role",
+      "text": "How are you engaging with AI safety?",
+      "options": [
+        {
+          "label": "I'm an active researcher (academic or independent)",
+          "value": "ai_researcher",
+          "weights": { "research": 1.0, "technical": 0.8, "alignment": 0.7 }
+        },
+        {
+          "label": "I'm transitioning into the field",
+          "value": "ai_transitioning",
+          "weights": { "career_change": 1.0, "ai_safety": 0.6, "mentorship": 0.5 }
+        },
+        {
+          "label": "I'm a student or self-studying",
+          "value": "ai_student",
+          "weights": { "mentorship": 0.8, "research": 0.4, "community": 0.5 }
+        },
+        {
+          "label": "I work in ops/comms/fundraising for an AI safety org",
+          "value": "ai_ops",
+          "weights": { "ops_fundraising": 1.0, "ai_safety": 0.5, "community": 0.4 }
+        }
+      ]
+    },
+
+    {
+      "id": "q_bio_role",
+      "text": "What's your background in biosecurity?",
+      "options": [
+        {
+          "label": "Life sciences researcher or wet-lab scientist",
+          "value": "bio_scientist",
+          "weights": { "biorisk": 1.0, "research": 0.9, "technical": 0.6 }
+        },
+        {
+          "label": "Policy analyst or government professional",
+          "value": "bio_policy",
+          "weights": { "policy": 1.0, "governance": 0.8, "biorisk": 0.6 }
+        },
+        {
+          "label": "Generalist interested in biorisk",
+          "value": "bio_generalist",
+          "weights": { "biorisk": 0.7, "ea_general": 0.5, "career_change": 0.4 }
+        },
+        {
+          "label": "Engineer building bio-detection or safety tools",
+          "value": "bio_engineer",
+          "weights": { "technical": 1.0, "biorisk": 0.8, "research": 0.5 }
+        }
+      ]
+    },
+
+    {
+      "id": "q_govpolicy_role",
+      "text": "Which aspect of AI governance interests you most?",
+      "options": [
+        {
+          "label": "International treaties and arms control",
+          "value": "gov_international",
+          "weights": { "governance": 1.0, "policy": 0.8, "ai_safety": 0.4 }
+        },
+        {
+          "label": "National legislation and regulatory frameworks",
+          "value": "gov_national",
+          "weights": { "policy": 1.0, "governance": 0.7 }
+        },
+        {
+          "label": "Corporate accountability and industry standards",
+          "value": "gov_corporate",
+          "weights": { "governance": 0.8, "policy": 0.6, "ai_safety": 0.5 }
+        },
+        {
+          "label": "Research on governance mechanisms",
+          "value": "gov_research",
+          "weights": { "research": 0.9, "governance": 0.8, "policy": 0.6 }
+        }
+      ]
+    },
+
+    {
+      "id": "q_ea_involvement",
+      "text": "How involved are you in the EA community?",
+      "options": [
+        {
+          "label": "Deeply involved — I help organise events or groups",
+          "value": "ea_organiser",
+          "weights": { "community": 1.0, "ea_general": 0.8, "mentorship": 0.5 }
+        },
+        {
+          "label": "Active member attending events and giving",
+          "value": "ea_active",
+          "weights": { "ea_general": 1.0, "community": 0.7 }
+        },
+        {
+          "label": "Newer to EA, still figuring things out",
+          "value": "ea_new",
+          "weights": { "ea_general": 0.6, "community": 0.5, "mentorship": 0.7, "career_change": 0.4 }
+        },
+        {
+          "label": "I follow EA ideas but prefer independent action",
+          "value": "ea_adjacent",
+          "weights": { "ea_general": 0.4, "research": 0.4 }
+        }
+      ]
+    },
+
+    {
+      "id": "q_mentorship",
+      "text": "What kind of connection are you most looking for?",
+      "options": [
+        {
+          "label": "A mentor who can guide my career",
+          "value": "want_mentor",
+          "weights": { "mentorship": 1.0, "career_change": 0.6 }
+        },
+        {
+          "label": "A peer to collaborate or co-author with",
+          "value": "want_collaborator",
+          "weights": { "research": 0.8, "community": 0.5, "technical": 0.4 }
+        },
+        {
+          "label": "A community of friends with shared values",
+          "value": "want_community",
+          "weights": { "community": 1.0, "ea_general": 0.5 }
+        },
+        {
+          "label": "Someone to mentor (I want to give back)",
+          "value": "want_mentee",
+          "weights": { "mentorship": 0.8, "community": 0.6 }
+        }
+      ]
+    },
+
+    {
+      "id": "q_skills",
+      "text": "Which best describes your primary skill set?",
+      "options": [
+        {
+          "label": "Technical / ML / Engineering",
+          "value": "skill_technical",
+          "weights": { "technical": 1.0, "research": 0.5, "ai_safety": 0.4 }
+        },
+        {
+          "label": "Research / Academia / Writing",
+          "value": "skill_research",
+          "weights": { "research": 1.0, "alignment": 0.4, "governance": 0.3 }
+        },
+        {
+          "label": "Policy / Law / Strategy",
+          "value": "skill_policy",
+          "weights": { "policy": 1.0, "governance": 0.8 }
+        },
+        {
+          "label": "Operations / Fundraising / Comms",
+          "value": "skill_ops",
+          "weights": { "ops_fundraising": 1.0, "community": 0.5 }
+        }
+      ]
+    },
+
+    {
+      "id": "q_timeline",
+      "text": "How do you think about the AI risk timeline?",
+      "hint": "This helps us match people with compatible world-views.",
+      "options": [
+        {
+          "label": "Short-term risk (< 10 years) — urgent action now",
+          "value": "timeline_short",
+          "weights": { "ai_safety": 0.9, "alignment": 0.7, "technical": 0.5 }
+        },
+        {
+          "label": "Medium-term (10–30 years) — steady preparation",
+          "value": "timeline_medium",
+          "weights": { "ai_safety": 0.7, "governance": 0.6, "research": 0.5 }
+        },
+        {
+          "label": "Long-term (30+ years) — build institutions now",
+          "value": "timeline_long",
+          "weights": { "governance": 0.8, "policy": 0.7, "ea_general": 0.4 }
+        },
+        {
+          "label": "Uncertain / not sure",
+          "value": "timeline_uncertain",
+          "weights": { "ea_general": 0.4, "research": 0.4 }
+        }
+      ]
+    },
+
+    {
+      "id": "q_collab_style",
+      "text": "What collaboration style suits you best?",
+      "options": [
+        {
+          "label": "Async, deep work — I prefer written exchanges",
+          "value": "style_async",
+          "weights": { "research": 0.6, "technical": 0.4 }
+        },
+        {
+          "label": "Regular video calls or in-person meetings",
+          "value": "style_sync",
+          "weights": { "community": 0.7, "mentorship": 0.5 }
+        },
+        {
+          "label": "A mix of both",
+          "value": "style_mixed",
+          "weights": { "community": 0.5, "research": 0.4, "mentorship": 0.4 }
+        },
+        {
+          "label": "I'm flexible — I match the other person's style",
+          "value": "style_flexible",
+          "weights": { "community": 0.6, "mentorship": 0.6, "ea_general": 0.3 }
+        }
+      ]
+    }
+  ]
+}
