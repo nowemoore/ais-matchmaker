@@ -1,253 +1,364 @@
 {
-  "startId": "q_focus",
   "questions": [
     {
-      "id": "q_focus",
-      "text": "Which cause area do you care most about right now?",
-      "hint": "Pick the one that best represents where you want to spend your energy.",
+      "id": "q_location",
+      "section": "About You",
+      "text": "Where are you based?",
+      "type": "dropdown",
+      "required": false,
       "options": [
-        {
-          "label": "AI Safety & Alignment",
-          "value": "ai_safety_focus",
-          "weights": { "ai_safety": 1.0, "alignment": 0.8, "technical": 0.5 },
-          "nextQuestionId": "q_ai_role"
-        },
-        {
-          "label": "Biosecurity & Pandemic Preparedness",
-          "value": "bio_focus",
-          "weights": { "biorisk": 1.0, "governance": 0.4, "policy": 0.4 },
-          "nextQuestionId": "q_bio_role"
-        },
-        {
-          "label": "AI Governance & Policy",
-          "value": "governance_focus",
-          "weights": { "governance": 1.0, "policy": 0.9, "ai_safety": 0.4 },
-          "nextQuestionId": "q_govpolicy_role"
-        },
-        {
-          "label": "Effective Altruism (general)",
-          "value": "ea_focus",
-          "weights": { "ea_general": 1.0, "community": 0.5 },
-          "nextQuestionId": "q_ea_involvement"
-        }
+        { "label": "United States", "value": "usa", "weights": {} },
+        { "label": "United Kingdom", "value": "uk", "weights": {} },
+        { "label": "Canada", "value": "canada", "weights": {} },
+        { "label": "Australia", "value": "australia", "weights": {} },
+        { "label": "New Zealand", "value": "nz", "weights": {} },
+        { "label": "Germany", "value": "germany", "weights": {} },
+        { "label": "Netherlands", "value": "netherlands", "weights": {} },
+        { "label": "Sweden", "value": "sweden", "weights": {} },
+        { "label": "Switzerland", "value": "switzerland", "weights": {} },
+        { "label": "France", "value": "france", "weights": {} },
+        { "label": "Denmark", "value": "denmark", "weights": {} },
+        { "label": "Norway", "value": "norway", "weights": {} },
+        { "label": "Other Europe", "value": "europe_other", "weights": {} },
+        { "label": "India", "value": "india", "weights": {} },
+        { "label": "Singapore", "value": "singapore", "weights": {} },
+        { "label": "Japan", "value": "japan", "weights": {} },
+        { "label": "China", "value": "china", "weights": {} },
+        { "label": "Other Asia", "value": "asia_other", "weights": {} },
+        { "label": "Latin America", "value": "latam", "weights": {} },
+        { "label": "Middle East", "value": "middle_east", "weights": {} },
+        { "label": "Africa", "value": "africa", "weights": {} },
+        { "label": "Other", "value": "other", "weights": {} }
       ]
     },
-
     {
-      "id": "q_ai_role",
-      "text": "How are you engaging with AI safety?",
-      "options": [
-        {
-          "label": "I'm an active researcher (academic or independent)",
-          "value": "ai_researcher",
-          "weights": { "research": 1.0, "technical": 0.8, "alignment": 0.7 }
-        },
-        {
-          "label": "I'm transitioning into the field",
-          "value": "ai_transitioning",
-          "weights": { "career_change": 1.0, "ai_safety": 0.6, "mentorship": 0.5 }
-        },
-        {
-          "label": "I'm a student or self-studying",
-          "value": "ai_student",
-          "weights": { "mentorship": 0.8, "research": 0.4, "community": 0.5 }
-        },
-        {
-          "label": "I work in ops/comms/fundraising for an AI safety org",
-          "value": "ai_ops",
-          "weights": { "ops_fundraising": 1.0, "ai_safety": 0.5, "community": 0.4 }
-        }
-      ]
+      "id": "q_connect_mode",
+      "section": "About You",
+      "text": "Do you prefer connecting online or in-person?",
+      "type": "slider",
+      "required": false,
+      "sliderMin": "Online only",
+      "sliderMax": "In-person only",
+      "sliderTag": "style_in_person"
     },
-
     {
-      "id": "q_bio_role",
-      "text": "What's your background in biosecurity?",
-      "options": [
-        {
-          "label": "Life sciences researcher or wet-lab scientist",
-          "value": "bio_scientist",
-          "weights": { "biorisk": 1.0, "research": 0.9, "technical": 0.6 }
-        },
-        {
-          "label": "Policy analyst or government professional",
-          "value": "bio_policy",
-          "weights": { "policy": 1.0, "governance": 0.8, "biorisk": 0.6 }
-        },
-        {
-          "label": "Generalist interested in biorisk",
-          "value": "bio_generalist",
-          "weights": { "biorisk": 0.7, "ea_general": 0.5, "career_change": 0.4 }
-        },
-        {
-          "label": "Engineer building bio-detection or safety tools",
-          "value": "bio_engineer",
-          "weights": { "technical": 1.0, "biorisk": 0.8, "research": 0.5 }
-        }
-      ]
+      "id": "q_age",
+      "section": "About You",
+      "text": "How old are you?",
+      "type": "free_text",
+      "required": false,
+      "placeholder": "e.g. 28"
     },
-
     {
-      "id": "q_govpolicy_role",
-      "text": "Which aspect of AI governance interests you most?",
+      "id": "q_identity",
+      "section": "About You",
+      "text": "How do you identify?",
+      "type": "dropdown",
+      "required": false,
       "options": [
-        {
-          "label": "International treaties and arms control",
-          "value": "gov_international",
-          "weights": { "governance": 1.0, "policy": 0.8, "ai_safety": 0.4 }
-        },
-        {
-          "label": "National legislation and regulatory frameworks",
-          "value": "gov_national",
-          "weights": { "policy": 1.0, "governance": 0.7 }
-        },
-        {
-          "label": "Corporate accountability and industry standards",
-          "value": "gov_corporate",
-          "weights": { "governance": 0.8, "policy": 0.6, "ai_safety": 0.5 }
-        },
-        {
-          "label": "Research on governance mechanisms",
-          "value": "gov_research",
-          "weights": { "research": 0.9, "governance": 0.8, "policy": 0.6 }
-        }
+        { "label": "Woman", "value": "woman", "weights": {} },
+        { "label": "Man", "value": "man", "weights": {} },
+        { "label": "Non-binary", "value": "non_binary", "weights": {} },
+        { "label": "Prefer not to say", "value": "prefer_not_say", "weights": {} },
+        { "label": "Prefer to self-describe", "value": "self_describe", "weights": {} }
       ]
     },
-
     {
-      "id": "q_ea_involvement",
-      "text": "How involved are you in the EA community?",
+      "id": "q_cause_areas",
+      "section": "Your Priorities",
+      "text": "What cause areas do you focus on?",
+      "hint": "Select all that apply.",
+      "type": "multi_select",
+      "required": true,
       "options": [
-        {
-          "label": "Deeply involved — I help organise events or groups",
-          "value": "ea_organiser",
-          "weights": { "community": 1.0, "ea_general": 0.8, "mentorship": 0.5 }
-        },
-        {
-          "label": "Active member attending events and giving",
-          "value": "ea_active",
-          "weights": { "ea_general": 1.0, "community": 0.7 }
-        },
-        {
-          "label": "Newer to EA, still figuring things out",
-          "value": "ea_new",
-          "weights": { "ea_general": 0.6, "community": 0.5, "mentorship": 0.7, "career_change": 0.4 }
-        },
-        {
-          "label": "I follow EA ideas but prefer independent action",
-          "value": "ea_adjacent",
-          "weights": { "ea_general": 0.4, "research": 0.4 }
-        }
+        { "label": "AI safety", "value": "ai_safety", "weights": { "ai_safety": 1.0 } },
+        { "label": "Biosecurity", "value": "biorisk", "weights": { "biorisk": 1.0 } },
+        { "label": "Global health & development", "value": "global_health", "weights": { "global_health": 1.0 } },
+        { "label": "Animal welfare", "value": "animal_welfare", "weights": { "animal_welfare": 1.0 } },
+        { "label": "Nuclear security", "value": "nuclear", "weights": { "nuclear": 1.0 } },
+        { "label": "Climate", "value": "climate", "weights": { "climate": 1.0 } },
+        { "label": "Mental health", "value": "mental_health", "weights": { "mental_health": 1.0 } },
+        { "label": "Other", "value": "cause_other", "weights": {} }
       ]
     },
-
     {
-      "id": "q_mentorship",
-      "text": "What kind of connection are you most looking for?",
+      "id": "q_ais_subareas",
+      "section": "Your Priorities",
+      "text": "What sub-area of AI safety are you interested in?",
+      "hint": "Select all that apply.",
+      "type": "multi_select",
+      "required": false,
       "options": [
-        {
-          "label": "A mentor who can guide my career",
-          "value": "want_mentor",
-          "weights": { "mentorship": 1.0, "career_change": 0.6 }
-        },
-        {
-          "label": "A peer to collaborate or co-author with",
-          "value": "want_collaborator",
-          "weights": { "research": 0.8, "community": 0.5, "technical": 0.4 }
-        },
-        {
-          "label": "A community of friends with shared values",
-          "value": "want_community",
-          "weights": { "community": 1.0, "ea_general": 0.5 }
-        },
-        {
-          "label": "Someone to mentor (I want to give back)",
-          "value": "want_mentee",
-          "weights": { "mentorship": 0.8, "community": 0.6 }
-        }
+        { "label": "Alignment", "value": "alignment", "weights": { "alignment": 1.0 } },
+        { "label": "Interpretability", "value": "interpretability", "weights": { "interpretability": 1.0 } },
+        { "label": "Governance & Policy", "value": "governance", "weights": { "governance": 1.0 } },
+        { "label": "Field-building", "value": "field_building", "weights": { "field_building": 1.0 } },
+        { "label": "AI comms & narrative", "value": "ai_comms", "weights": { "ai_comms": 1.0 } },
+        { "label": "Biosecurity research", "value": "biosec_research", "weights": { "biosec_research": 1.0 } },
+        { "label": "Global poverty", "value": "global_poverty", "weights": { "global_poverty": 1.0 } },
+        { "label": "Other", "value": "ais_sub_other", "weights": {} }
       ]
     },
-
+    {
+      "id": "q_theory_of_change",
+      "section": "Your Priorities",
+      "text": "What's your theory of change?",
+      "hint": "How do you think you'll have the most impact? Select all that apply.",
+      "type": "multi_select",
+      "required": true,
+      "options": [
+        { "label": "Direct technical work", "value": "toc_direct", "weights": { "toc_direct": 1.0 } },
+        { "label": "Policy", "value": "toc_policy", "weights": { "toc_policy": 1.0 } },
+        { "label": "Advocacy", "value": "toc_advocacy", "weights": { "toc_advocacy": 1.0 } },
+        { "label": "Movement building", "value": "toc_movement", "weights": { "toc_movement": 1.0 } },
+        { "label": "Earning to give", "value": "toc_earning", "weights": { "toc_earning": 1.0 } },
+        { "label": "Research", "value": "toc_research", "weights": { "toc_research": 1.0 } },
+        { "label": "Community building", "value": "toc_community", "weights": { "toc_community": 1.0 } },
+        { "label": "Unsure", "value": "toc_unsure", "weights": {} }
+      ]
+    },
+    {
+      "id": "q_work_mode",
+      "section": "Your Idea",
+      "text": "What do you want to work on?",
+      "hint": "Select all that apply.",
+      "type": "multi_select",
+      "required": true,
+      "options": [
+        { "label": "Start a new org", "value": "work_start_org", "weights": { "work_start_org": 1.0 } },
+        { "label": "Contribute to an existing org", "value": "work_contribute", "weights": { "work_contribute": 1.0 } },
+        { "label": "Independent research", "value": "work_independent", "weights": { "work_independent": 1.0 } },
+        { "label": "Advise or consult", "value": "work_advise", "weights": { "work_advise": 1.0 } },
+        { "label": "Volunteer", "value": "work_volunteer", "weights": { "work_volunteer": 1.0 } },
+        { "label": "Find a co-founder", "value": "work_co_founder", "weights": { "work_co_founder": 1.0 } },
+        { "label": "Unsure", "value": "work_unsure", "weights": {} }
+      ]
+    },
+    {
+      "id": "q_impact",
+      "section": "Your Idea",
+      "text": "What impact do you most want to have?",
+      "hint": "Select all that apply.",
+      "type": "multi_select",
+      "required": true,
+      "options": [
+        { "label": "Reduce existential risk", "value": "imp_xrisk", "weights": { "imp_xrisk": 1.0 } },
+        { "label": "Accelerate AI safety research", "value": "imp_research", "weights": { "imp_research": 1.0 } },
+        { "label": "Influence policy & regulation", "value": "imp_policy", "weights": { "imp_policy": 1.0 } },
+        { "label": "Build the EA/AIS community", "value": "imp_community", "weights": { "imp_community": 1.0 } },
+        { "label": "Develop talent & mentorship pipelines", "value": "imp_talent", "weights": { "imp_talent": 1.0 } },
+        { "label": "Fund high-impact work", "value": "imp_funding", "weights": { "imp_funding": 1.0 } },
+        { "label": "Change mainstream narratives", "value": "imp_narratives", "weights": { "imp_narratives": 1.0 } },
+        { "label": "Build tools or products", "value": "imp_tools", "weights": { "imp_tools": 1.0 } },
+        { "label": "Improve institutional decision-making", "value": "imp_institutions", "weights": { "imp_institutions": 1.0 } },
+        { "label": "Near-term suffering reduction", "value": "imp_near_term", "weights": { "imp_near_term": 1.0 } }
+      ]
+    },
+    {
+      "id": "q_bottleneck",
+      "section": "Your Idea",
+      "text": "What's your biggest bottleneck right now?",
+      "hint": "Select all that apply.",
+      "type": "multi_select",
+      "required": true,
+      "options": [
+        { "label": "Finding collaborators", "value": "need_collaborators", "weights": { "need_collaborators": 1.0 } },
+        { "label": "Funding", "value": "need_funding", "weights": { "need_funding": 1.0 } },
+        { "label": "Time", "value": "need_time", "weights": { "need_time": 1.0 } },
+        { "label": "Skill gaps", "value": "need_skills", "weights": { "need_skills": 1.0 } },
+        { "label": "Direction & clarity", "value": "need_direction", "weights": { "need_direction": 1.0 } },
+        { "label": "Feedback & validation", "value": "need_feedback", "weights": { "need_feedback": 1.0 } },
+        { "label": "Network access", "value": "need_network", "weights": { "need_network": 1.0 } },
+        { "label": "Motivation", "value": "need_motivation", "weights": { "need_motivation": 1.0 } }
+      ]
+    },
+    {
+      "id": "q_ea_engagement",
+      "section": "Your Background & Vibe",
+      "text": "How long have you been involved in the EA community?",
+      "type": "dropdown",
+      "required": true,
+      "options": [
+        { "label": "Just got here!", "value": "ea_new", "weights": {} },
+        { "label": "< 6 months", "value": "ea_lt6mo", "weights": {} },
+        { "label": "6 months – 2 years", "value": "ea_6mo_2yr", "weights": {} },
+        { "label": "2 – 5 years", "value": "ea_2_5yr", "weights": {} },
+        { "label": "5+ years", "value": "ea_5plus", "weights": {} }
+      ]
+    },
+    {
+      "id": "q_ais_engagement",
+      "section": "Your Background & Vibe",
+      "text": "How would you describe your level of engagement with AI safety?",
+      "type": "dropdown",
+      "required": true,
+      "options": [
+        { "label": "Curious", "value": "ais_curious", "weights": { "ais_engagement": 0.2 } },
+        { "label": "Actively learning", "value": "ais_learning", "weights": { "ais_engagement": 0.4 } },
+        { "label": "Somewhat involved", "value": "ais_somewhat", "weights": { "ais_engagement": 0.6 } },
+        { "label": "Deeply involved", "value": "ais_deep", "weights": { "ais_engagement": 0.8 } },
+        { "label": "It's my full-time focus", "value": "ais_fulltime", "weights": { "ais_engagement": 1.0 } }
+      ]
+    },
+    {
+      "id": "q_career_stage",
+      "section": "Your Background & Vibe",
+      "text": "Where are you in your career?",
+      "type": "dropdown",
+      "required": true,
+      "options": [
+        { "label": "Student", "value": "student", "weights": {} },
+        { "label": "Early career (0–3 years)", "value": "early_career", "weights": {} },
+        { "label": "Mid-career (3–10 years)", "value": "mid_career", "weights": {} },
+        { "label": "Senior", "value": "senior", "weights": {} },
+        { "label": "Funder", "value": "funder", "weights": {} },
+        { "label": "Career transitioning", "value": "transitioning", "weights": {} },
+        { "label": "Retired", "value": "retired", "weights": {} }
+      ]
+    },
+    {
+      "id": "q_academic_bg",
+      "section": "Your Background & Vibe",
+      "text": "What's your academic background (if any)?",
+      "hint": "Select all that apply.",
+      "type": "multi_select",
+      "required": false,
+      "options": [
+        { "label": "Computer science", "value": "cs", "weights": {} },
+        { "label": "Mathematics", "value": "math", "weights": {} },
+        { "label": "Physics", "value": "physics", "weights": {} },
+        { "label": "Biology", "value": "biology", "weights": {} },
+        { "label": "Philosophy", "value": "philosophy", "weights": {} },
+        { "label": "Economics", "value": "economics", "weights": {} },
+        { "label": "Law", "value": "law", "weights": {} },
+        { "label": "Political science", "value": "poli_sci", "weights": {} },
+        { "label": "Psychology", "value": "psychology", "weights": {} },
+        { "label": "Engineering", "value": "engineering", "weights": {} },
+        { "label": "Cognitive sciences", "value": "cog_sci", "weights": {} },
+        { "label": "N/A", "value": "no_academic", "weights": {} },
+        { "label": "Other", "value": "academic_other", "weights": {} }
+      ]
+    },
+    {
+      "id": "q_professional_bg",
+      "section": "Your Background & Vibe",
+      "text": "What's your professional background (if any)?",
+      "hint": "Select all that apply.",
+      "type": "multi_select",
+      "required": false,
+      "options": [
+        { "label": "Tech", "value": "prof_tech", "weights": {} },
+        { "label": "Research", "value": "prof_research", "weights": {} },
+        { "label": "Policy", "value": "prof_policy", "weights": {} },
+        { "label": "Finance", "value": "prof_finance", "weights": {} },
+        { "label": "Medicine", "value": "prof_medicine", "weights": {} },
+        { "label": "Law", "value": "prof_law", "weights": {} },
+        { "label": "Academia", "value": "prof_academia", "weights": {} },
+        { "label": "Operations", "value": "prof_ops", "weights": {} },
+        { "label": "NGO / non-profit", "value": "prof_ngo", "weights": {} },
+        { "label": "Start-ups", "value": "prof_startups", "weights": {} },
+        { "label": "Military", "value": "prof_military", "weights": {} },
+        { "label": "Other", "value": "prof_other", "weights": {} }
+      ]
+    },
     {
       "id": "q_skills",
-      "text": "Which best describes your primary skill set?",
+      "section": "Your Background & Vibe",
+      "text": "What skills can you offer?",
+      "hint": "Select all that apply.",
+      "type": "multi_select",
+      "required": true,
       "options": [
-        {
-          "label": "Technical / ML / Engineering",
-          "value": "skill_technical",
-          "weights": { "technical": 1.0, "research": 0.5, "ai_safety": 0.4 }
-        },
-        {
-          "label": "Research / Academia / Writing",
-          "value": "skill_research",
-          "weights": { "research": 1.0, "alignment": 0.4, "governance": 0.3 }
-        },
-        {
-          "label": "Policy / Law / Strategy",
-          "value": "skill_policy",
-          "weights": { "policy": 1.0, "governance": 0.8 }
-        },
-        {
-          "label": "Operations / Fundraising / Comms",
-          "value": "skill_ops",
-          "weights": { "ops_fundraising": 1.0, "community": 0.5 }
-        }
+        { "label": "ML / AI engineering", "value": "skill_ml", "weights": { "skill_ml": 1.0 } },
+        { "label": "Interpretability research", "value": "skill_interp", "weights": { "skill_interp": 1.0 } },
+        { "label": "Writing & comms", "value": "skill_writing", "weights": { "skill_writing": 1.0 } },
+        { "label": "Policy & advocacy", "value": "skill_policy", "weights": { "skill_policy": 1.0 } },
+        { "label": "Fundraising", "value": "skill_fundraising", "weights": { "skill_fundraising": 1.0 } },
+        { "label": "Operations", "value": "skill_ops", "weights": { "skill_ops": 1.0 } },
+        { "label": "Mentoring", "value": "skill_mentoring", "weights": { "skill_mentoring": 1.0 } },
+        { "label": "Community building", "value": "skill_community", "weights": { "skill_community": 1.0 } },
+        { "label": "Philosophy", "value": "skill_philosophy", "weights": { "skill_philosophy": 1.0 } },
+        { "label": "Economics", "value": "skill_economics", "weights": { "skill_economics": 1.0 } },
+        { "label": "Legal", "value": "skill_legal", "weights": { "skill_legal": 1.0 } },
+        { "label": "Software dev", "value": "skill_software", "weights": { "skill_software": 1.0 } },
+        { "label": "Data analysis", "value": "skill_data", "weights": { "skill_data": 1.0 } },
+        { "label": "Design", "value": "skill_design", "weights": { "skill_design": 1.0 } },
+        { "label": "Other", "value": "skill_other", "weights": {} }
       ]
     },
-
     {
-      "id": "q_timeline",
-      "text": "How do you think about the AI risk timeline?",
-      "hint": "This helps us match people with compatible world-views.",
+      "id": "q_ws_focus",
+      "section": "Your Background & Vibe",
+      "text": "How do you prefer to work? (focus vs collaboration)",
+      "type": "slider",
+      "required": false,
+      "sliderMin": "Deep focus",
+      "sliderMax": "Collaborative",
+      "sliderTag": "style_collaborative"
+    },
+    {
+      "id": "q_ws_pace",
+      "section": "Your Background & Vibe",
+      "text": "How do you prefer to work? (pace vs rigour)",
+      "type": "slider",
+      "required": false,
+      "sliderMin": "Fast-moving",
+      "sliderMax": "Slow & rigorous",
+      "sliderTag": "style_rigorous"
+    },
+    {
+      "id": "q_ws_thinking",
+      "section": "Your Background & Vibe",
+      "text": "How do you prefer to work? (thinking style)",
+      "type": "slider",
+      "required": false,
+      "sliderMin": "Creative thinker",
+      "sliderMax": "Systems thinker",
+      "sliderTag": "style_systems"
+    },
+    {
+      "id": "q_ws_breadth",
+      "section": "Your Background & Vibe",
+      "text": "How do you prefer to work? (breadth vs depth)",
+      "type": "slider",
+      "required": false,
+      "sliderMin": "Generalist",
+      "sliderMax": "Specialist",
+      "sliderTag": "style_specialist"
+    },
+    {
+      "id": "q_ws_social",
+      "section": "Your Background & Vibe",
+      "text": "How do you prefer to work? (social energy)",
+      "type": "slider",
+      "required": false,
+      "sliderMin": "Introverted",
+      "sliderMax": "Extroverted",
+      "sliderTag": "style_extroverted"
+    },
+    {
+      "id": "q_time_per_week",
+      "section": "Your Time & Commitment",
+      "text": "How much time can you dedicate per week?",
+      "type": "dropdown",
+      "required": true,
       "options": [
-        {
-          "label": "Short-term risk (< 10 years) — urgent action now",
-          "value": "timeline_short",
-          "weights": { "ai_safety": 0.9, "alignment": 0.7, "technical": 0.5 }
-        },
-        {
-          "label": "Medium-term (10–30 years) — steady preparation",
-          "value": "timeline_medium",
-          "weights": { "ai_safety": 0.7, "governance": 0.6, "research": 0.5 }
-        },
-        {
-          "label": "Long-term (30+ years) — build institutions now",
-          "value": "timeline_long",
-          "weights": { "governance": 0.8, "policy": 0.7, "ea_general": 0.4 }
-        },
-        {
-          "label": "Uncertain / not sure",
-          "value": "timeline_uncertain",
-          "weights": { "ea_general": 0.4, "research": 0.4 }
-        }
+        { "label": "< 2 hrs", "value": "time_lt2", "weights": {} },
+        { "label": "2–5 hrs", "value": "time_2_5", "weights": {} },
+        { "label": "5–10 hrs", "value": "time_5_10", "weights": {} },
+        { "label": "10–20 hrs", "value": "time_10_20", "weights": {} },
+        { "label": "Can commit full-time to the right project!", "value": "time_fulltime", "weights": {} }
       ]
     },
-
     {
-      "id": "q_collab_style",
-      "text": "What collaboration style suits you best?",
-      "options": [
-        {
-          "label": "Async, deep work — I prefer written exchanges",
-          "value": "style_async",
-          "weights": { "research": 0.6, "technical": 0.4 }
-        },
-        {
-          "label": "Regular video calls or in-person meetings",
-          "value": "style_sync",
-          "weights": { "community": 0.7, "mentorship": 0.5 }
-        },
-        {
-          "label": "A mix of both",
-          "value": "style_mixed",
-          "weights": { "community": 0.5, "research": 0.4, "mentorship": 0.4 }
-        },
-        {
-          "label": "I'm flexible — I match the other person's style",
-          "value": "style_flexible",
-          "weights": { "community": 0.6, "mentorship": 0.6, "ea_general": 0.3 }
-        }
-      ]
+      "id": "q_launch_or_plugin",
+      "section": "Your Time & Commitment",
+      "text": "Are you here to launch or to plug in?",
+      "type": "slider",
+      "required": false,
+      "sliderMin": "Plug in to existing work",
+      "sliderMax": "Launch something new",
+      "sliderTag": "style_launch"
     }
   ]
 }

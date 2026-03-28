@@ -1,13 +1,14 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import quizConfig from "@/data/quiz.json";
-import { getQuestionSequence, buildTagVector } from "@/lib/quiz";
+import { buildTagVector } from "@/lib/quiz";
 import { createClient } from "@/lib/supabase/client";
-import type { QuizConfig, QuizQuestion } from "@/types";
+import type { QuizConfig, QuizQuestion, AnswerValue } from "@/types";
 
 const config = quizConfig as QuizConfig;
+const questions = config.questions;
 
 interface Props {
   userId: string;
@@ -17,51 +18,79 @@ export default function QuizClient({ userId }: Props) {
   const router = useRouter();
   const supabase = createClient();
 
-  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [answers, setAnswers] = useState<Record<string, AnswerValue>>({});
   const [currentIndex, setCurrentIndex] = useState(0);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Recompute visible question sequence whenever answers change
-  const sequence: QuizQuestion[] = useMemo(
-    () => getQuestionSequence(config, answers),
-    [answers]
-  );
+  const question = questions[currentIndex];
+  const total = questions.length;
+  const progress = ((currentIndex + 1) / total) * 100;
 
-  const currentQuestion = sequence[currentIndex];
-  const totalVisible = sequence.length;
-  const progress = totalVisible > 0 ? ((currentIndex) / totalVisible) * 100 : 0;
-  function handleSelect(questionId: string, value: string) {
-    setAnswers((prev) => ({ ...prev, [questionId]: value }));
+  const showSectionHeader =
+    currentIndex === 0 ||
+    question.section !== questions[currentIndex - 1].section;
+
+  function canProceed(): boolean {
+    if (!question.required) return true;
+    const a = answers[question.id];
+    if (a === undefined) return false;
+    if (question.type === "multi_select") return Array.isArray(a) && a.length > 0;
+    if (question.type === "slider") return true;
+    if (question.type === "free_text") return true;
+    return typeof a === "string" && a.length > 0;
+  }
+
+  function sliderValue(): number {
+    const v = answers[question.id];
+    return typeof v === "number" ? v : 0.5;
+  }
+
+  function handleDropdown(id: string, value: string) {
+    setAnswers((p) => ({ ...p, [id]: value }));
+  }
+
+  function handleMultiToggle(id: string, value: string) {
+    setAnswers((p) => {
+      const cur = (p[id] as string[] | undefined) ?? [];
+      const next = cur.includes(value) ? cur.filter((v) => v !== value) : [...cur, value];
+      return { ...p, [id]: next };
+    });
+  }
+
+  function handleSlider(id: string, value: number) {
+    setAnswers((p) => ({ ...p, [id]: value }));
+  }
+
+  function handleText(id: string, value: string) {
+    setAnswers((p) => ({ ...p, [id]: value }));
   }
 
   function handleNext() {
-    if (currentIndex < sequence.length - 1) {
-      setCurrentIndex((i) => i + 1);
-    }
+    if (currentIndex < questions.length - 1) setCurrentIndex((i) => i + 1);
   }
 
   function handleBack() {
-    if (currentIndex > 0) {
-      setCurrentIndex((i) => i - 1);
-    }
+    if (currentIndex > 0) setCurrentIndex((i) => i - 1);
   }
-
-  // Check if user has answered the current question
-  const hasAnswered = currentQuestion && answers[currentQuestion.id] !== undefined;
-
-  // Whether we're on the last answerable step
-  const onFinalQuestion = currentIndex === sequence.length - 1;
 
   async function handleSubmit() {
     setSaving(true);
     setError(null);
 
-    const tagVector = buildTagVector(config, answers);
+    // Default any unanswered sliders to 0.5
+    const finalAnswers = { ...answers };
+    for (const q of questions) {
+      if (q.type === "slider" && finalAnswers[q.id] === undefined) {
+        finalAnswers[q.id] = 0.5;
+      }
+    }
+
+    const tagVector = buildTagVector(config, finalAnswers);
 
     const { error: dbError } = await supabase.from("quiz_responses").insert({
       user_id: userId,
-      answers,
+      answers: finalAnswers,
       tag_vector: tagVector,
     });
 
@@ -75,74 +104,78 @@ export default function QuizClient({ userId }: Props) {
     router.refresh();
   }
 
-  if (!currentQuestion) {
-    return (
-      <main className="min-h-screen flex items-center justify-center">
-        <p className="text-slate-400">Loading quiz…</p>
-      </main>
-    );
-  }
+  const onFinal = currentIndex === questions.length - 1;
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center px-4 py-16">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900/30 via-slate-950 to-slate-950" />
 
       <div className="w-full max-w-xl space-y-8">
-        {/* Header */}
-        <div className="text-center space-y-1">
-          <p className="text-xs text-indigo-400 font-medium uppercase tracking-widest">
-            Question {currentIndex + 1} of ~{totalVisible}
+        {/* Progress */}
+        <div className="space-y-1 text-center">
+          <p className="text-xs font-medium uppercase tracking-widest text-indigo-400">
+            {currentIndex + 1} / {total}
           </p>
-          <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+          <div className="w-full h-1.5 rounded-full bg-slate-800 overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full transition-all duration-500"
+              className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-violet-500 transition-all duration-500"
               style={{ width: `${progress}%` }}
             />
           </div>
         </div>
 
-        {/* Question card */}
+        {/* Card */}
         <div className="bg-slate-900/70 border border-slate-800 rounded-2xl p-8 space-y-6 backdrop-blur">
-          <div className="space-y-2">
-            <h2 className="text-xl font-semibold leading-snug">
-              {currentQuestion.text}
-            </h2>
-            {currentQuestion.hint && (
-              <p className="text-sm text-slate-400">{currentQuestion.hint}</p>
+          {showSectionHeader && (
+            <p className="text-xs font-semibold uppercase tracking-widest text-indigo-400">
+              {question.section}
+            </p>
+          )}
+
+          <div className="space-y-1.5">
+            <h2 className="text-xl font-semibold leading-snug">{question.text}</h2>
+            {question.hint && (
+              <p className="text-sm text-slate-400">{question.hint}</p>
+            )}
+            {!question.required && (
+              <p className="text-xs text-slate-500 italic">Optional</p>
             )}
           </div>
 
-          {/* Options */}
-          <div className="space-y-3">
-            {currentQuestion.options.map((option) => {
-              const selected = answers[currentQuestion.id] === option.value;
-              return (
-                <button
-                  key={option.value}
-                  onClick={() => handleSelect(currentQuestion.id, option.value)}
-                  className={`w-full text-left rounded-xl border px-4 py-3.5 text-sm font-medium transition-all duration-150 ${
-                    selected
-                      ? "border-indigo-500 bg-indigo-600/20 text-indigo-200 shadow-md shadow-indigo-900/30"
-                      : "border-slate-700 bg-slate-800/40 text-slate-300 hover:border-slate-500 hover:bg-slate-800"
-                  }`}
-                >
-                  <span className="flex items-center gap-3">
-                    <span
-                      className={`flex-shrink-0 w-4 h-4 rounded-full border-2 ${
-                        selected
-                          ? "border-indigo-400 bg-indigo-400"
-                          : "border-slate-500"
-                      }`}
-                    />
-                    {option.label}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
+          {question.type === "dropdown" && (
+            <DropdownInput
+              question={question}
+              value={answers[question.id] as string | undefined}
+              onChange={(v) => handleDropdown(question.id, v)}
+            />
+          )}
+
+          {question.type === "multi_select" && (
+            <MultiSelectInput
+              question={question}
+              selected={(answers[question.id] as string[] | undefined) ?? []}
+              onToggle={(v) => handleMultiToggle(question.id, v)}
+            />
+          )}
+
+          {question.type === "slider" && (
+            <SliderInput
+              question={question}
+              value={sliderValue()}
+              onChange={(v) => handleSlider(question.id, v)}
+            />
+          )}
+
+          {question.type === "free_text" && (
+            <FreeTextInput
+              question={question}
+              value={(answers[question.id] as string | undefined) ?? ""}
+              onChange={(v) => handleText(question.id, v)}
+            />
+          )}
 
           {error && (
-            <p className="text-sm text-red-400 bg-red-900/20 border border-red-800/40 rounded-lg px-3 py-2">
+            <p className="rounded-lg border border-red-800/40 bg-red-900/20 px-3 py-2 text-sm text-red-400">
               {error}
             </p>
           )}
@@ -153,24 +186,24 @@ export default function QuizClient({ userId }: Props) {
           <button
             onClick={handleBack}
             disabled={currentIndex === 0}
-            className="rounded-xl border border-slate-700 hover:border-slate-500 px-5 py-2.5 text-sm font-medium text-slate-300 hover:text-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            className="rounded-xl border border-slate-700 px-5 py-2.5 text-sm font-medium text-slate-300 transition-colors hover:border-slate-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
           >
             ← Back
           </button>
 
-          {onFinalQuestion ? (
+          {onFinal ? (
             <button
               onClick={handleSubmit}
-              disabled={!hasAnswered || saving}
-              className="rounded-xl bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 px-6 py-2.5 text-sm font-semibold text-white shadow-md transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              disabled={!canProceed() || saving}
+              className="rounded-xl bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white shadow-md transition-colors hover:bg-indigo-500 active:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-40"
             >
               {saving ? "Finding your matches…" : "See My Matches →"}
             </button>
           ) : (
             <button
               onClick={handleNext}
-              disabled={!hasAnswered}
-              className="rounded-xl bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 px-6 py-2.5 text-sm font-semibold text-white shadow-md transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              disabled={!canProceed()}
+              className="rounded-xl bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white shadow-md transition-colors hover:bg-indigo-500 active:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-40"
             >
               Next →
             </button>
@@ -178,5 +211,123 @@ export default function QuizClient({ userId }: Props) {
         </div>
       </div>
     </main>
+  );
+}
+
+// ── Input sub-components ──────────────────────────────────────────────────────
+
+function DropdownInput({
+  question,
+  value,
+  onChange,
+}: {
+  question: QuizQuestion;
+  value: string | undefined;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div className="relative">
+      <select
+        value={value ?? ""}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full appearance-none rounded-lg border border-slate-700 bg-slate-800 px-3 py-2.5 pr-8 text-sm text-slate-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer"
+      >
+        <option value="" disabled>
+          Select an option…
+        </option>
+        {question.options?.map((opt) => (
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
+      <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
+        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </div>
+    </div>
+  );
+}
+
+function MultiSelectInput({
+  question,
+  selected,
+  onToggle,
+}: {
+  question: QuizQuestion;
+  selected: string[];
+  onToggle: (v: string) => void;
+}) {
+  return (
+    <div className="flex flex-wrap gap-2">
+      {question.options?.map((opt) => {
+        const active = selected.includes(opt.value);
+        return (
+          <button
+            key={opt.value}
+            type="button"
+            onClick={() => onToggle(opt.value)}
+            className={`rounded-full border px-3 py-1.5 text-sm font-medium transition-all ${
+              active
+                ? "border-indigo-500 bg-indigo-600/30 text-indigo-200"
+                : "border-slate-700 bg-slate-800/40 text-slate-300 hover:border-slate-500 hover:text-slate-100"
+            }`}
+          >
+            {active && <span className="mr-1 text-indigo-400">✓</span>}
+            {opt.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function SliderInput({
+  question,
+  value,
+  onChange,
+}: {
+  question: QuizQuestion;
+  value: number;
+  onChange: (v: number) => void;
+}) {
+  const pct = Math.round(value * 100);
+  return (
+    <div className="space-y-3">
+      <input
+        type="range"
+        min={0}
+        max={100}
+        value={pct}
+        onChange={(e) => onChange(Number(e.target.value) / 100)}
+        className="w-full accent-indigo-500 cursor-pointer"
+      />
+      <div className="flex justify-between text-xs text-slate-400">
+        <span>{question.sliderMin}</span>
+        <span className="text-slate-500">{pct}%</span>
+        <span>{question.sliderMax}</span>
+      </div>
+    </div>
+  );
+}
+
+function FreeTextInput({
+  question,
+  value,
+  onChange,
+}: {
+  question: QuizQuestion;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <input
+      type="text"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={question.placeholder ?? "Type your answer…"}
+      className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-500 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+    />
   );
 }

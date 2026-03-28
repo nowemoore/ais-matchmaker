@@ -1,70 +1,61 @@
-import type { QuizConfig, QuizQuestion, TagVector, QuizOption } from "@/types";
+import type { QuizConfig, TagVector, AnswerValue } from "@/types";
 
 /**
- * Given a quiz config and a map of questionId → chosen option value,
- * return the ordered list of questions that were (or will be) shown,
- * respecting adaptive branching via `nextQuestionId`.
- */
-export function getQuestionSequence(
-  config: QuizConfig,
-  answers: Record<string, string>
-): QuizQuestion[] {
-  const byId = new Map(config.questions.map((q) => [q.id, q]));
-  const sequence: QuizQuestion[] = [];
-  const visited = new Set<string>();
-
-  let currentId = config.startId ?? config.questions[0]?.id;
-
-  while (currentId && !visited.has(currentId)) {
-    const q = byId.get(currentId);
-    if (!q) break;
-
-    visited.add(currentId);
-    sequence.push(q);
-
-    const chosenValue = answers[currentId];
-    const chosenOption = q.options.find((o) => o.value === chosenValue);
-
-    if (chosenOption?.nextQuestionId) {
-      currentId = chosenOption.nextQuestionId;
-    } else {
-      // Linear: find the next question in the original array that hasn't been visited
-      const idx = config.questions.findIndex((qq) => qq.id === currentId);
-      const next = config.questions.slice(idx + 1).find((qq) => !visited.has(qq.id));
-      currentId = next?.id ?? "";
-    }
-  }
-
-  return sequence;
-}
-
-/**
- * Aggregate all chosen option weights into a single normalised TagVector.
- * Each tag value is averaged across all questions that contributed to it.
+ * Build a tag vector from a completed set of answers.
+ *
+ * - dropdown    → looks up the selected option's weights
+ * - multi_select→ sums weights for every selected option
+ * - slider      → writes the numeric value (0–1) directly to sliderTag
+ * - free_text   → ignored (stored in answers but not used for matching)
  */
 export function buildTagVector(
   config: QuizConfig,
-  answers: Record<string, string>
+  answers: Record<string, AnswerValue>
 ): TagVector {
-  const byId = new Map(config.questions.map((q) => [q.id, q]));
   const sums: Record<string, number> = {};
-  const counts: Record<string, number> = {};
 
-  for (const [questionId, chosenValue] of Object.entries(answers)) {
-    const q = byId.get(questionId);
-    if (!q) continue;
-    const option: QuizOption | undefined = q.options.find((o) => o.value === chosenValue);
-    if (!option) continue;
+  for (const question of config.questions) {
+    const answer = answers[question.id];
+    if (answer === undefined || answer === null) continue;
 
-    for (const [tag, weight] of Object.entries(option.weights)) {
-      sums[tag] = (sums[tag] ?? 0) + (weight as number);
-      counts[tag] = (counts[tag] ?? 0) + 1;
+    switch (question.type) {
+      case "dropdown": {
+        const val = answer as string;
+        const option = question.options?.find((o) => o.value === val);
+        if (option?.weights) {
+          for (const [tag, weight] of Object.entries(option.weights)) {
+            sums[tag] = (sums[tag] ?? 0) + (weight as number);
+          }
+        }
+        break;
+      }
+
+      case "multi_select": {
+        const vals = (Array.isArray(answer) ? answer : []) as string[];
+        for (const val of vals) {
+          const option = question.options?.find((o) => o.value === val);
+          if (option?.weights) {
+            for (const [tag, weight] of Object.entries(option.weights)) {
+              sums[tag] = (sums[tag] ?? 0) + (weight as number);
+            }
+          }
+        }
+        break;
+      }
+
+      case "slider": {
+        if (question.sliderTag && typeof answer === "number") {
+          // Slider values replace rather than accumulate (each slider owns its tag)
+          sums[question.sliderTag] = answer;
+        }
+        break;
+      }
+
+      case "free_text":
+        // Not used for matching
+        break;
     }
   }
 
-  const vector: TagVector = {};
-  for (const tag of Object.keys(sums)) {
-    vector[tag as keyof TagVector] = sums[tag] / counts[tag];
-  }
-  return vector;
+  return sums as TagVector;
 }
