@@ -78,7 +78,6 @@ export default function QuizClient({ userId }: Props) {
     setSaving(true);
     setError(null);
 
-    // Default any unanswered sliders to 0.5
     const finalAnswers = { ...answers };
     for (const q of questions) {
       if (q.type === "slider" && finalAnswers[q.id] === undefined) {
@@ -108,37 +107,40 @@ export default function QuizClient({ userId }: Props) {
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center px-4 py-16">
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900/30 via-slate-950 to-slate-950" />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#ede4cc] to-cream" />
 
-      <div className="w-full max-w-xl space-y-8">
+      <div className="w-full max-w-xl space-y-6">
         {/* Progress */}
-        <div className="space-y-1 text-center">
-          <p className="text-xs font-medium uppercase tracking-widest text-indigo-400">
-            {currentIndex + 1} / {total}
-          </p>
-          <div className="w-full h-1.5 rounded-full bg-slate-800 overflow-hidden">
+        <div className="space-y-1.5">
+          <div className="flex justify-between text-xs text-brown-muted">
+            <span>{question.section}</span>
+            <span>{currentIndex + 1} of {total}</span>
+          </div>
+          <div className="w-full h-2 rounded-full bg-taupe/30 overflow-hidden">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-violet-500 transition-all duration-500"
+              className="h-full rounded-full bg-sage transition-all duration-500"
               style={{ width: `${progress}%` }}
             />
           </div>
         </div>
 
         {/* Card */}
-        <div className="bg-slate-900/70 border border-slate-800 rounded-2xl p-8 space-y-6 backdrop-blur">
+        <div className="bg-white/70 border border-taupe rounded-2xl p-8 space-y-6 shadow-sm">
           {showSectionHeader && (
-            <p className="text-xs font-semibold uppercase tracking-widest text-indigo-400">
+            <p className="text-xs font-semibold uppercase tracking-wider text-sage">
               {question.section}
             </p>
           )}
 
           <div className="space-y-1.5">
-            <h2 className="text-xl font-semibold leading-snug">{question.text}</h2>
+            <h2 className="text-xl font-semibold leading-snug text-brown">
+              {question.text}
+            </h2>
             {question.hint && (
-              <p className="text-sm text-slate-400">{question.hint}</p>
+              <p className="text-sm text-brown-muted">{question.hint}</p>
             )}
             {!question.required && (
-              <p className="text-xs text-slate-500 italic">Optional</p>
+              <p className="text-xs text-taupe italic">Optional — feel free to skip</p>
             )}
           </div>
 
@@ -175,7 +177,7 @@ export default function QuizClient({ userId }: Props) {
           )}
 
           {error && (
-            <p className="rounded-lg border border-red-800/40 bg-red-900/20 px-3 py-2 text-sm text-red-400">
+            <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
               {error}
             </p>
           )}
@@ -186,7 +188,7 @@ export default function QuizClient({ userId }: Props) {
           <button
             onClick={handleBack}
             disabled={currentIndex === 0}
-            className="rounded-xl border border-slate-700 px-5 py-2.5 text-sm font-medium text-slate-300 transition-colors hover:border-slate-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
+            className="rounded-xl border border-taupe bg-white/60 hover:bg-white px-5 py-2.5 text-sm font-medium text-brown transition-colors disabled:cursor-not-allowed disabled:opacity-30"
           >
             ← Back
           </button>
@@ -195,7 +197,7 @@ export default function QuizClient({ userId }: Props) {
             <button
               onClick={handleSubmit}
               disabled={!canProceed() || saving}
-              className="rounded-xl bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white shadow-md transition-colors hover:bg-indigo-500 active:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-40"
+              className="rounded-xl bg-sage hover:bg-sage-dark px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors disabled:cursor-not-allowed disabled:opacity-40"
             >
               {saving ? "Finding your matches…" : "See My Matches →"}
             </button>
@@ -203,7 +205,7 @@ export default function QuizClient({ userId }: Props) {
             <button
               onClick={handleNext}
               disabled={!canProceed()}
-              className="rounded-xl bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white shadow-md transition-colors hover:bg-indigo-500 active:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-40"
+              className="rounded-xl bg-sage hover:bg-sage-dark px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors disabled:cursor-not-allowed disabled:opacity-40"
             >
               Next →
             </button>
@@ -230,18 +232,14 @@ function DropdownInput({
       <select
         value={value ?? ""}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full appearance-none rounded-lg border border-slate-700 bg-slate-800 px-3 py-2.5 pr-8 text-sm text-slate-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer"
+        className="w-full appearance-none rounded-lg border border-taupe bg-white px-3 py-2.5 pr-8 text-sm text-brown focus:border-sage focus:outline-none focus:ring-1 focus:ring-sage cursor-pointer"
       >
-        <option value="" disabled>
-          Select an option…
-        </option>
+        <option value="" disabled>Select an option…</option>
         {question.options?.map((opt) => (
-          <option key={opt.value} value={opt.value}>
-            {opt.label}
-          </option>
+          <option key={opt.value} value={opt.value}>{opt.label}</option>
         ))}
       </select>
-      <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
+      <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-taupe">
         <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
@@ -270,11 +268,11 @@ function MultiSelectInput({
             onClick={() => onToggle(opt.value)}
             className={`rounded-full border px-3 py-1.5 text-sm font-medium transition-all ${
               active
-                ? "border-indigo-500 bg-indigo-600/30 text-indigo-200"
-                : "border-slate-700 bg-slate-800/40 text-slate-300 hover:border-slate-500 hover:text-slate-100"
+                ? "border-sage bg-mint/40 text-brown"
+                : "border-taupe bg-white/60 text-brown-light hover:border-sage/60 hover:bg-mint/20"
             }`}
           >
-            {active && <span className="mr-1 text-indigo-400">✓</span>}
+            {active && <span className="mr-1 text-sage">✓</span>}
             {opt.label}
           </button>
         );
@@ -301,11 +299,11 @@ function SliderInput({
         max={100}
         value={pct}
         onChange={(e) => onChange(Number(e.target.value) / 100)}
-        className="w-full accent-indigo-500 cursor-pointer"
+        className="w-full cursor-pointer accent-sage"
       />
-      <div className="flex justify-between text-xs text-slate-400">
+      <div className="flex justify-between text-xs text-brown-muted">
         <span>{question.sliderMin}</span>
-        <span className="text-slate-500">{pct}%</span>
+        <span className="text-taupe">{pct}%</span>
         <span>{question.sliderMax}</span>
       </div>
     </div>
@@ -327,7 +325,7 @@ function FreeTextInput({
       value={value}
       onChange={(e) => onChange(e.target.value)}
       placeholder={question.placeholder ?? "Type your answer…"}
-      className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-500 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+      className="w-full rounded-lg border border-taupe bg-white px-3 py-2.5 text-sm text-brown placeholder:text-taupe focus:border-sage focus:outline-none focus:ring-1 focus:ring-sage"
     />
   );
 }

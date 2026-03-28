@@ -8,70 +8,54 @@ export default async function LandingPage() {
   } = await supabase.auth.getUser();
 
   return (
-    <main className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden px-4">
-      {/* Background gradient */}
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900/40 via-slate-950 to-slate-950" />
+    <main className="min-h-screen flex flex-col items-center justify-center px-4 py-16">
+      {/* Soft warm top wash */}
+      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#ede4cc] to-cream" />
 
-      {/* Subtle grid overlay */}
-      <div
-        className="absolute inset-0 -z-10 opacity-20"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(99,102,241,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(99,102,241,0.15) 1px, transparent 1px)",
-          backgroundSize: "64px 64px",
-        }}
-      />
+      <div className="max-w-2xl w-full text-center space-y-8">
 
-      <div className="max-w-3xl text-center space-y-8">
-        {/* Badge */}
-        <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-4 py-1.5 text-sm text-indigo-300">
-          <span className="h-2 w-2 rounded-full bg-indigo-400 animate-pulse" />
-          Now in early access
+        {/* Early access tag */}
+        <div className="inline-block rounded-full border border-taupe bg-white/60 px-4 py-1 text-sm text-brown-light">
+          Early access — join a small, thoughtful community
         </div>
 
         {/* Headline */}
-        <h1 className="text-5xl sm:text-7xl font-bold tracking-tight">
+        <h1 className="text-5xl sm:text-6xl font-bold tracking-tight text-brown leading-tight">
           Effective{" "}
-          <span className="bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
-            Matching
-          </span>
+          <span className="text-sage">Matching</span>
         </h1>
 
         {/* Tagline */}
-        <p className="text-xl sm:text-2xl text-slate-400 max-w-2xl mx-auto leading-relaxed">
-          Connect with collaborators, mentors, and friends who share your
-          commitment to{" "}
-          <span className="text-slate-200 font-medium">AI safety</span>,{" "}
-          <span className="text-slate-200 font-medium">biosecurity</span>, and{" "}
-          <span className="text-slate-200 font-medium">
-            effective altruism
-          </span>
-          .
+        <p className="text-lg sm:text-xl text-brown-light max-w-xl mx-auto leading-relaxed">
+          Meet collaborators, mentors, and friends who share your commitment to{" "}
+          <span className="font-medium text-brown">AI safety</span>,{" "}
+          <span className="font-medium text-brown">biosecurity</span>, and{" "}
+          <span className="font-medium text-brown">effective altruism</span>.
         </p>
 
-        {/* CTA */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+        {/* CTA buttons */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
           <Link
             href={user ? "/quiz" : "/auth"}
-            className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-indigo-900/40 transition-colors"
+            className="inline-flex items-center gap-2 rounded-xl bg-sage hover:bg-sage-dark px-8 py-3.5 text-base font-semibold text-white shadow-sm transition-colors"
           >
             Take the Quiz
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
             </svg>
           </Link>
           {user && (
             <Link
               href="/matches"
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-700 hover:border-slate-500 px-8 py-4 text-lg font-semibold text-slate-300 hover:text-white transition-colors"
+              className="inline-flex items-center gap-2 rounded-xl border border-taupe bg-white/50 hover:bg-white px-8 py-3.5 text-base font-semibold text-brown transition-colors"
             >
               View My Matches
             </Link>
           )}
         </div>
 
-        {/* Feature pills */}
-        <div className="flex flex-wrap justify-center gap-3 pt-8 text-sm text-slate-400">
+        {/* Cause area tags */}
+        <div className="flex flex-wrap justify-center gap-2 pt-4">
           {[
             "AI Safety",
             "Alignment Research",
@@ -83,7 +67,7 @@ export default async function LandingPage() {
           ].map((tag) => (
             <span
               key={tag}
-              className="rounded-full border border-slate-800 bg-slate-900/50 px-3 py-1"
+              className="rounded-full border border-taupe/60 bg-white/50 px-3 py-1 text-sm text-brown-muted"
             >
               {tag}
             </span>
@@ -91,9 +75,8 @@ export default async function LandingPage() {
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="absolute bottom-6 text-slate-600 text-sm">
-        Built for the longtermist community
+      <footer className="absolute bottom-6 text-sm text-taupe">
+        Built for people working on what matters most
       </footer>
     </main>
   );
