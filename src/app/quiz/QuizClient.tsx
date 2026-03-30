@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { faCircleChevronLeft, faCircleChevronRight } from "@fortawesome/free-solid-svg-icons";
 import quizConfig from "@/data/quiz.json";
 import { buildTagVector } from "@/lib/quiz";
 import { createClient } from "@/lib/supabase/client";
@@ -27,9 +27,6 @@ export default function QuizClient({ userId }: Props) {
   const question = questions[currentIndex];
   const total = questions.length;
   const progress = ((currentIndex + 1) / total) * 100;
-
-  const showSectionHeader =
-    currentIndex === 0 || question.section !== questions[currentIndex - 1].section;
 
   function canProceed(): boolean {
     if (!question.required) return true;
@@ -111,12 +108,6 @@ export default function QuizClient({ userId }: Props) {
           className="rounded-2xl border border-white/15 p-8 space-y-6 shadow-xl"
           style={{ background: "rgba(255,255,255,0.06)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)" }}
         >
-          {showSectionHeader && (
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#AFDED4]/70">
-              {question.section}
-            </p>
-          )}
-
           <div className="space-y-1.5">
             <h2 className="text-xl font-semibold leading-snug text-white">
               {question.text}
@@ -187,10 +178,9 @@ export default function QuizClient({ userId }: Props) {
           <button
             onClick={handleBack}
             disabled={currentIndex === 0}
-            className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/8 px-5 py-2.5 text-sm font-medium text-white/70 backdrop-blur-md hover:bg-white/15 transition-colors disabled:cursor-not-allowed disabled:opacity-30"
+            className="text-white/40 hover:text-white/80 transition-colors disabled:cursor-not-allowed disabled:opacity-20"
           >
-            <FontAwesomeIcon icon={faChevronLeft} className="w-3 h-3" />
-            Back
+            <FontAwesomeIcon icon={faCircleChevronLeft} className="w-9 h-9" />
           </button>
 
           {onFinal ? (
@@ -200,16 +190,15 @@ export default function QuizClient({ userId }: Props) {
               className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/15 px-6 py-2.5 text-sm font-semibold text-white backdrop-blur-md hover:bg-white/25 transition-colors disabled:cursor-not-allowed disabled:opacity-40 shadow-lg"
             >
               {saving ? "Finding your matches…" : "See My Matches"}
-              {!saving && <FontAwesomeIcon icon={faChevronRight} className="w-3 h-3" />}
+              {!saving && <FontAwesomeIcon icon={faCircleChevronRight} className="w-4 h-4" />}
             </button>
           ) : (
             <button
               onClick={handleNext}
               disabled={!canProceed()}
-              className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/15 px-6 py-2.5 text-sm font-semibold text-white backdrop-blur-md hover:bg-white/25 transition-colors disabled:cursor-not-allowed disabled:opacity-40 shadow-lg"
+              className="text-white/40 hover:text-white/80 transition-colors disabled:cursor-not-allowed disabled:opacity-20"
             >
-              Next
-              <FontAwesomeIcon icon={faChevronRight} className="w-3 h-3" />
+              <FontAwesomeIcon icon={faCircleChevronRight} className="w-9 h-9" />
             </button>
           )}
         </div>
@@ -220,18 +209,25 @@ export default function QuizClient({ userId }: Props) {
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
+const glassStyle = {
+  background: "rgba(255,255,255,0.07)",
+  backdropFilter: "blur(12px)",
+  WebkitBackdropFilter: "blur(12px)",
+  colorScheme: "dark" as const,
+};
+
 const selectClass =
-  "w-full appearance-none rounded-xl border border-white/15 bg-white/8 px-4 py-2.5 pr-8 text-sm text-white placeholder:text-white/30 focus:border-[#AFDED4]/50 focus:outline-none focus:ring-1 focus:ring-[#AFDED4]/30 cursor-pointer backdrop-blur-sm";
+  "w-full appearance-none rounded-xl border border-white/15 px-4 py-2.5 pr-8 text-sm text-white/90 focus:border-[#AFDED4]/50 focus:outline-none focus:ring-1 focus:ring-[#AFDED4]/30 cursor-pointer";
 
 const inputClass =
-  "w-full rounded-xl border border-white/15 bg-white/8 px-4 py-2.5 text-sm text-white placeholder:text-white/30 focus:border-[#AFDED4]/50 focus:outline-none focus:ring-1 focus:ring-[#AFDED4]/30 backdrop-blur-sm";
+  "w-full rounded-xl border border-white/15 px-4 py-2.5 text-sm text-white/90 placeholder:text-white/30 focus:border-[#AFDED4]/50 focus:outline-none focus:ring-1 focus:ring-[#AFDED4]/30";
 
 function DropdownInput({ question, value, onChange }: {
   question: QuizQuestion; value: string | undefined; onChange: (v: string) => void;
 }) {
   return (
     <div className="relative">
-      <select value={value ?? ""} onChange={(e) => onChange(e.target.value)} className={selectClass}>
+      <select value={value ?? ""} onChange={(e) => onChange(e.target.value)} className={selectClass} style={glassStyle}>
         <option value="" disabled className="bg-[#0b1120]">Select an option…</option>
         {question.options?.map((opt) => (
           <option key={opt.value} value={opt.value} className="bg-[#0b1120]">{opt.label}</option>
@@ -274,6 +270,7 @@ function LocationInput({ question, country, city, onCountry, onCity }: {
         onChange={(e) => onCity(e.target.value)}
         placeholder="City (optional)"
         className={inputClass}
+        style={glassStyle}
       />
     </div>
   );
