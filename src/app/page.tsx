@@ -112,12 +112,12 @@ export default async function LandingPage() {
             )}
           </div>
 
-          {/* Chips with icons — single row, scroll on small screens */}
-          <div className="flex flex-nowrap justify-center gap-2 pt-2 overflow-x-auto pb-1 scrollbar-none">
+          {/* Chips with icons */}
+          <div className="flex flex-wrap justify-center gap-2 pt-2">
             {CHIPS.map(({ label, icon }) => (
               <span
                 key={label}
-                className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/8 px-3 py-1 text-sm text-white/55 backdrop-blur-sm"
+                className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/8 px-3 py-1 text-sm text-white/55 backdrop-blur-sm whitespace-nowrap"
               >
                 <FontAwesomeIcon icon={icon} className="w-3 h-3 text-[#AFDED4]/70" />
                 {label}

@@ -20,7 +20,7 @@ export default function RotatingQuestion() {
         setIndex((i) => (i + 1) % QUESTIONS.length);
         setVisible(true);
       }, 400);
-    }, 3500);
+    }, 5000);
     return () => clearInterval(interval);
   }, []);
 
