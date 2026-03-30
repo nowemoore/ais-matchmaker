@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import quizConfig from "@/data/quiz.json";
 import { buildTagVector } from "@/lib/quiz";
 import { createClient } from "@/lib/supabase/client";
@@ -10,9 +13,7 @@ import type { QuizConfig, QuizQuestion, AnswerValue } from "@/types";
 const config = quizConfig as QuizConfig;
 const questions = config.questions;
 
-interface Props {
-  userId: string;
-}
+interface Props { userId: string; }
 
 export default function QuizClient({ userId }: Props) {
   const router = useRouter();
@@ -28,42 +29,19 @@ export default function QuizClient({ userId }: Props) {
   const progress = ((currentIndex + 1) / total) * 100;
 
   const showSectionHeader =
-    currentIndex === 0 ||
-    question.section !== questions[currentIndex - 1].section;
+    currentIndex === 0 || question.section !== questions[currentIndex - 1].section;
 
   function canProceed(): boolean {
     if (!question.required) return true;
     const a = answers[question.id];
+    if (question.type === "location") {
+      return typeof answers[question.id] === "string" && (answers[question.id] as string).length > 0;
+    }
     if (a === undefined) return false;
     if (question.type === "multi_select") return Array.isArray(a) && a.length > 0;
     if (question.type === "slider") return true;
     if (question.type === "free_text") return true;
     return typeof a === "string" && a.length > 0;
-  }
-
-  function sliderValue(): number {
-    const v = answers[question.id];
-    return typeof v === "number" ? v : 0.5;
-  }
-
-  function handleDropdown(id: string, value: string) {
-    setAnswers((p) => ({ ...p, [id]: value }));
-  }
-
-  function handleMultiToggle(id: string, value: string) {
-    setAnswers((p) => {
-      const cur = (p[id] as string[] | undefined) ?? [];
-      const next = cur.includes(value) ? cur.filter((v) => v !== value) : [...cur, value];
-      return { ...p, [id]: next };
-    });
-  }
-
-  function handleSlider(id: string, value: number) {
-    setAnswers((p) => ({ ...p, [id]: value }));
-  }
-
-  function handleText(id: string, value: string) {
-    setAnswers((p) => ({ ...p, [id]: value }));
   }
 
   function handleNext() {
@@ -77,28 +55,15 @@ export default function QuizClient({ userId }: Props) {
   async function handleSubmit() {
     setSaving(true);
     setError(null);
-
     const finalAnswers = { ...answers };
     for (const q of questions) {
-      if (q.type === "slider" && finalAnswers[q.id] === undefined) {
-        finalAnswers[q.id] = 0.5;
-      }
+      if (q.type === "slider" && finalAnswers[q.id] === undefined) finalAnswers[q.id] = 0.5;
     }
-
     const tagVector = buildTagVector(config, finalAnswers);
-
     const { error: dbError } = await supabase.from("quiz_responses").insert({
-      user_id: userId,
-      answers: finalAnswers,
-      tag_vector: tagVector,
+      user_id: userId, answers: finalAnswers, tag_vector: tagVector,
     });
-
-    if (dbError) {
-      setError(dbError.message);
-      setSaving(false);
-      return;
-    }
-
+    if (dbError) { setError(dbError.message); setSaving(false); return; }
     router.push("/matches");
     router.refresh();
   }
@@ -106,41 +71,59 @@ export default function QuizClient({ userId }: Props) {
   const onFinal = currentIndex === questions.length - 1;
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center px-4 py-16">
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#ede4cc] to-cream" />
+    <main
+      className="relative min-h-screen flex flex-col items-center justify-center px-4 py-16 text-white overflow-hidden"
+      style={{
+        background: `
+          radial-gradient(ellipse 90% 80% at 85% 10%, rgba(255,255,255,0.88) 0%, rgba(140,232,212,0.72) 18%, rgba(80,196,210,0.4) 38%, rgba(50,110,200,0.15) 58%, transparent 75%),
+          radial-gradient(ellipse 60% 50% at 100% 60%, rgba(60,160,180,0.2) 0%, transparent 60%),
+          #0b1120
+        `,
+      }}
+    >
+      {/* Back to home */}
+      <Link
+        href="/"
+        className="absolute top-6 left-6 inline-flex items-center gap-2 text-sm text-white/50 hover:text-white/90 transition-colors"
+      >
+        <FontAwesomeIcon icon={faChevronLeft} className="w-3 h-3" />
+        Home
+      </Link>
 
       <div className="w-full max-w-xl space-y-6">
+
         {/* Progress */}
         <div className="space-y-1.5">
-          <div className="flex justify-between text-xs text-brown-muted">
+          <div className="flex justify-between text-xs text-white/40">
             <span>{question.section}</span>
             <span>{currentIndex + 1} of {total}</span>
           </div>
-          <div className="w-full h-2 rounded-full bg-taupe/30 overflow-hidden">
+          <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden">
             <div
-              className="h-full rounded-full bg-sage transition-all duration-500"
-              style={{ width: `${progress}%` }}
+              className="h-full rounded-full transition-all duration-500"
+              style={{ width: `${progress}%`, background: "linear-gradient(to right, #AFDED4, #79A79E)" }}
             />
           </div>
         </div>
 
         {/* Card */}
-        <div className="bg-white/70 border border-taupe rounded-2xl p-8 space-y-6 shadow-sm">
+        <div
+          className="rounded-2xl border border-white/15 p-8 space-y-6 shadow-xl"
+          style={{ background: "rgba(255,255,255,0.06)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)" }}
+        >
           {showSectionHeader && (
-            <p className="text-xs font-semibold uppercase tracking-wider text-sage">
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#AFDED4]/70">
               {question.section}
             </p>
           )}
 
           <div className="space-y-1.5">
-            <h2 className="text-xl font-semibold leading-snug text-brown">
+            <h2 className="text-xl font-semibold leading-snug text-white">
               {question.text}
             </h2>
-            {question.hint && (
-              <p className="text-sm text-brown-muted">{question.hint}</p>
-            )}
+            {question.hint && <p className="text-sm text-white/50">{question.hint}</p>}
             {!question.required && (
-              <p className="text-xs text-taupe italic">Optional — feel free to skip</p>
+              <p className="text-xs text-white/30 italic">Optional — feel free to skip</p>
             )}
           </div>
 
@@ -148,7 +131,17 @@ export default function QuizClient({ userId }: Props) {
             <DropdownInput
               question={question}
               value={answers[question.id] as string | undefined}
-              onChange={(v) => handleDropdown(question.id, v)}
+              onChange={(v) => setAnswers((p) => ({ ...p, [question.id]: v }))}
+            />
+          )}
+
+          {question.type === "location" && (
+            <LocationInput
+              question={question}
+              country={answers[question.id] as string | undefined}
+              city={answers[`${question.id}_city`] as string | undefined}
+              onCountry={(v) => setAnswers((p) => ({ ...p, [question.id]: v }))}
+              onCity={(v) => setAnswers((p) => ({ ...p, [`${question.id}_city`]: v }))}
             />
           )}
 
@@ -156,15 +149,21 @@ export default function QuizClient({ userId }: Props) {
             <MultiSelectInput
               question={question}
               selected={(answers[question.id] as string[] | undefined) ?? []}
-              onToggle={(v) => handleMultiToggle(question.id, v)}
+              onToggle={(v) =>
+                setAnswers((p) => {
+                  const cur = (p[question.id] as string[] | undefined) ?? [];
+                  const next = cur.includes(v) ? cur.filter((x) => x !== v) : [...cur, v];
+                  return { ...p, [question.id]: next };
+                })
+              }
             />
           )}
 
           {question.type === "slider" && (
             <SliderInput
               question={question}
-              value={sliderValue()}
-              onChange={(v) => handleSlider(question.id, v)}
+              value={typeof answers[question.id] === "number" ? (answers[question.id] as number) : 0.5}
+              onChange={(v) => setAnswers((p) => ({ ...p, [question.id]: v }))}
             />
           )}
 
@@ -172,12 +171,12 @@ export default function QuizClient({ userId }: Props) {
             <FreeTextInput
               question={question}
               value={(answers[question.id] as string | undefined) ?? ""}
-              onChange={(v) => handleText(question.id, v)}
+              onChange={(v) => setAnswers((p) => ({ ...p, [question.id]: v }))}
             />
           )}
 
           {error && (
-            <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+            <p className="rounded-lg border border-red-400/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">
               {error}
             </p>
           )}
@@ -188,26 +187,29 @@ export default function QuizClient({ userId }: Props) {
           <button
             onClick={handleBack}
             disabled={currentIndex === 0}
-            className="rounded-xl border border-taupe bg-white/60 hover:bg-white px-5 py-2.5 text-sm font-medium text-brown transition-colors disabled:cursor-not-allowed disabled:opacity-30"
+            className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/8 px-5 py-2.5 text-sm font-medium text-white/70 backdrop-blur-md hover:bg-white/15 transition-colors disabled:cursor-not-allowed disabled:opacity-30"
           >
-            ← Back
+            <FontAwesomeIcon icon={faChevronLeft} className="w-3 h-3" />
+            Back
           </button>
 
           {onFinal ? (
             <button
               onClick={handleSubmit}
               disabled={!canProceed() || saving}
-              className="rounded-xl bg-sage hover:bg-sage-dark px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/15 px-6 py-2.5 text-sm font-semibold text-white backdrop-blur-md hover:bg-white/25 transition-colors disabled:cursor-not-allowed disabled:opacity-40 shadow-lg"
             >
-              {saving ? "Finding your matches…" : "See My Matches →"}
+              {saving ? "Finding your matches…" : "See My Matches"}
+              {!saving && <FontAwesomeIcon icon={faChevronRight} className="w-3 h-3" />}
             </button>
           ) : (
             <button
               onClick={handleNext}
               disabled={!canProceed()}
-              className="rounded-xl bg-sage hover:bg-sage-dark px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/15 px-6 py-2.5 text-sm font-semibold text-white backdrop-blur-md hover:bg-white/25 transition-colors disabled:cursor-not-allowed disabled:opacity-40 shadow-lg"
             >
-              Next →
+              Next
+              <FontAwesomeIcon icon={faChevronRight} className="w-3 h-3" />
             </button>
           )}
         </div>
@@ -216,30 +218,26 @@ export default function QuizClient({ userId }: Props) {
   );
 }
 
-// ── Input sub-components ──────────────────────────────────────────────────────
+// ── Sub-components ────────────────────────────────────────────────────────────
 
-function DropdownInput({
-  question,
-  value,
-  onChange,
-}: {
-  question: QuizQuestion;
-  value: string | undefined;
-  onChange: (v: string) => void;
+const selectClass =
+  "w-full appearance-none rounded-xl border border-white/15 bg-white/8 px-4 py-2.5 pr-8 text-sm text-white placeholder:text-white/30 focus:border-[#AFDED4]/50 focus:outline-none focus:ring-1 focus:ring-[#AFDED4]/30 cursor-pointer backdrop-blur-sm";
+
+const inputClass =
+  "w-full rounded-xl border border-white/15 bg-white/8 px-4 py-2.5 text-sm text-white placeholder:text-white/30 focus:border-[#AFDED4]/50 focus:outline-none focus:ring-1 focus:ring-[#AFDED4]/30 backdrop-blur-sm";
+
+function DropdownInput({ question, value, onChange }: {
+  question: QuizQuestion; value: string | undefined; onChange: (v: string) => void;
 }) {
   return (
     <div className="relative">
-      <select
-        value={value ?? ""}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full appearance-none rounded-lg border border-taupe bg-white px-3 py-2.5 pr-8 text-sm text-brown focus:border-sage focus:outline-none focus:ring-1 focus:ring-sage cursor-pointer"
-      >
-        <option value="" disabled>Select an option…</option>
+      <select value={value ?? ""} onChange={(e) => onChange(e.target.value)} className={selectClass}>
+        <option value="" disabled className="bg-[#0b1120]">Select an option…</option>
         {question.options?.map((opt) => (
-          <option key={opt.value} value={opt.value}>{opt.label}</option>
+          <option key={opt.value} value={opt.value} className="bg-[#0b1120]">{opt.label}</option>
         ))}
       </select>
-      <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-taupe">
+      <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-white/30">
         <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
@@ -248,14 +246,41 @@ function DropdownInput({
   );
 }
 
-function MultiSelectInput({
-  question,
-  selected,
-  onToggle,
-}: {
+function LocationInput({ question, country, city, onCountry, onCity }: {
   question: QuizQuestion;
-  selected: string[];
-  onToggle: (v: string) => void;
+  country: string | undefined;
+  city: string | undefined;
+  onCountry: (v: string) => void;
+  onCity: (v: string) => void;
+}) {
+  return (
+    <div className="space-y-3">
+      <div className="relative">
+        <select value={country ?? ""} onChange={(e) => onCountry(e.target.value)} className={selectClass}>
+          <option value="" disabled className="bg-[#0b1120]">Select a country…</option>
+          {question.options?.map((opt) => (
+            <option key={opt.value} value={opt.value} className="bg-[#0b1120]">{opt.label}</option>
+          ))}
+        </select>
+        <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-white/30">
+          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
+      </div>
+      <input
+        type="text"
+        value={city ?? ""}
+        onChange={(e) => onCity(e.target.value)}
+        placeholder="City (optional)"
+        className={inputClass}
+      />
+    </div>
+  );
+}
+
+function MultiSelectInput({ question, selected, onToggle }: {
+  question: QuizQuestion; selected: string[]; onToggle: (v: string) => void;
 }) {
   return (
     <div className="flex flex-wrap gap-2">
@@ -268,11 +293,11 @@ function MultiSelectInput({
             onClick={() => onToggle(opt.value)}
             className={`rounded-full border px-3 py-1.5 text-sm font-medium transition-all ${
               active
-                ? "border-sage bg-mint/40 text-brown"
-                : "border-taupe bg-white/60 text-brown-light hover:border-sage/60 hover:bg-mint/20"
+                ? "border-[#AFDED4]/60 bg-[#AFDED4]/15 text-[#AFDED4]"
+                : "border-white/15 bg-white/5 text-white/60 hover:border-white/30 hover:bg-white/10"
             }`}
           >
-            {active && <span className="mr-1 text-sage">✓</span>}
+            {active && <span className="mr-1 text-[#AFDED4]">✓</span>}
             {opt.label}
           </button>
         );
@@ -281,43 +306,28 @@ function MultiSelectInput({
   );
 }
 
-function SliderInput({
-  question,
-  value,
-  onChange,
-}: {
-  question: QuizQuestion;
-  value: number;
-  onChange: (v: number) => void;
+function SliderInput({ question, value, onChange }: {
+  question: QuizQuestion; value: number; onChange: (v: number) => void;
 }) {
   const pct = Math.round(value * 100);
   return (
     <div className="space-y-3">
       <input
-        type="range"
-        min={0}
-        max={100}
-        value={pct}
+        type="range" min={0} max={100} value={pct}
         onChange={(e) => onChange(Number(e.target.value) / 100)}
-        className="w-full cursor-pointer accent-sage"
+        className="w-full cursor-pointer accent-[#AFDED4]"
       />
-      <div className="flex justify-between text-xs text-brown-muted">
+      <div className="flex justify-between text-xs text-white/40">
         <span>{question.sliderMin}</span>
-        <span className="text-taupe">{pct}%</span>
+        <span className="text-[#AFDED4]/70">{pct}%</span>
         <span>{question.sliderMax}</span>
       </div>
     </div>
   );
 }
 
-function FreeTextInput({
-  question,
-  value,
-  onChange,
-}: {
-  question: QuizQuestion;
-  value: string;
-  onChange: (v: string) => void;
+function FreeTextInput({ question, value, onChange }: {
+  question: QuizQuestion; value: string; onChange: (v: string) => void;
 }) {
   return (
     <input
@@ -325,7 +335,7 @@ function FreeTextInput({
       value={value}
       onChange={(e) => onChange(e.target.value)}
       placeholder={question.placeholder ?? "Type your answer…"}
-      className="w-full rounded-lg border border-taupe bg-white px-3 py-2.5 text-sm text-brown placeholder:text-taupe focus:border-sage focus:outline-none focus:ring-1 focus:ring-sage"
+      className={inputClass}
     />
   );
 }
