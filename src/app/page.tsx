@@ -1,11 +1,30 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faShield,
+  faBrain,
+  faBiohazard,
+  faLandmark,
+  faUserGraduate,
+  faGlobe,
+  faCompass,
+  faChevronRight,
+} from "@fortawesome/free-solid-svg-icons";
+
+const CHIPS = [
+  { label: "AI Safety",           icon: faShield },
+  { label: "Alignment Research",  icon: faBrain },
+  { label: "Biorisk",             icon: faBiohazard },
+  { label: "Governance & Policy", icon: faLandmark },
+  { label: "Mentorship",          icon: faUserGraduate },
+  { label: "EA Community",        icon: faGlobe },
+  { label: "Career Guidance",     icon: faCompass },
+];
 
 export default async function LandingPage() {
   const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
 
   return (
     <main
@@ -33,30 +52,29 @@ export default async function LandingPage() {
           key={i}
           className="pointer-events-none absolute rounded-full bg-white/70"
           style={{
-            top: s.top,
-            left: s.left,
+            top: s.top, left: s.left,
             width: s.big ? "2.5px" : "1.5px",
             height: s.big ? "2.5px" : "1.5px",
           }}
         />
       ))}
 
-      {/* Top bar — early access badge */}
-      <div className="relative z-10 flex justify-center pt-8">
-        <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-medium text-white/80 backdrop-blur-sm">
-          <span className="h-1.5 w-1.5 rounded-full bg-[#AFDED4] animate-pulse" />
-          now in early access
-        </div>
-      </div>
-
-      {/* Main content — vertically centred in remaining space */}
+      {/* Centred content */}
       <div className="relative z-10 flex flex-1 flex-col items-center justify-center">
-        <div className="max-w-2xl w-full text-center space-y-7">
+        <div className="max-w-2xl w-full text-center space-y-6">
 
-          {/* Title */}
-          <h1 className="text-6xl sm:text-7xl font-bold tracking-tight text-white flex items-center justify-center gap-3 flex-wrap">
+          {/* Early access badge — directly above title */}
+          <div className="flex justify-center">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-medium text-white/80 backdrop-blur-sm">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#AFDED4] animate-pulse" />
+              now in early access
+            </div>
+          </div>
+
+          {/* Title — v1 chip sits on the text baseline */}
+          <h1 className="text-6xl sm:text-7xl font-bold tracking-tight text-white flex items-end justify-center gap-3 flex-wrap leading-none">
             AIS Soup
-            <span className="inline-flex items-center rounded-full border border-[#AFDED4]/50 bg-[#AFDED4]/10 px-3.5 py-0.5 text-2xl font-medium text-[#AFDED4] backdrop-blur-sm tracking-normal">
+            <span className="inline-flex items-center rounded-full border border-[#AFDED4]/50 bg-[#AFDED4]/10 px-3 py-0.5 text-xl font-medium text-[#AFDED4] backdrop-blur-sm tracking-normal mb-1.5">
               v1
             </span>
           </h1>
@@ -68,15 +86,13 @@ export default async function LandingPage() {
           </p>
 
           {/* CTA buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-1">
             <Link
               href={user ? "/quiz" : "/auth"}
               className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/15 px-8 py-3.5 text-base font-semibold text-white backdrop-blur-md hover:bg-white/25 transition-colors shadow-lg"
             >
               Take the Quiz
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-              </svg>
+              <FontAwesomeIcon icon={faChevronRight} className="w-3.5 h-3.5" />
             </Link>
             {user && (
               <Link
@@ -88,22 +104,15 @@ export default async function LandingPage() {
             )}
           </div>
 
-          {/* Chips */}
-          <div className="flex flex-wrap justify-center gap-2 pt-4">
-            {[
-              "AI Safety",
-              "Alignment Research",
-              "Biorisk",
-              "Governance & Policy",
-              "Mentorship",
-              "EA Community",
-              "Career Guidance",
-            ].map((tag) => (
+          {/* Chips with icons */}
+          <div className="flex flex-wrap justify-center gap-2 pt-2">
+            {CHIPS.map(({ label, icon }) => (
               <span
-                key={tag}
-                className="rounded-full border border-white/15 bg-white/8 px-3 py-1 text-sm text-white/55 backdrop-blur-sm"
+                key={label}
+                className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/8 px-3 py-1 text-sm text-white/55 backdrop-blur-sm"
               >
-                {tag}
+                <FontAwesomeIcon icon={icon} className="w-3 h-3 text-[#AFDED4]/70" />
+                {label}
               </span>
             ))}
           </div>
