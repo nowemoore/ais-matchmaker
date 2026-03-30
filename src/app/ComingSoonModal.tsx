@@ -26,7 +26,7 @@ const ITEMS = [
   {
     question: "What can you expect from FAISBOOK in the future?",
     answer:
-      "In addition to getting not",
+      "In addition to getting notified about matches, you will be able to browse the community map and get invited to exclusive events relevant to you soon. FAISBOOK is also planning to add more opportunities for early-career AIS practitioners to meet more experienced mentors and learn more by doing. In the long-term, the hope is for FAISBOOK to become a place established organisations can find promising talent, and for the community to better understand where the gaps and opportunities are in the ecosystem.",
   },
 ];
 
