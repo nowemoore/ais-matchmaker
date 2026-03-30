@@ -8,17 +8,16 @@ export default async function LandingPage() {
   } = await supabase.auth.getUser();
 
   return (
-    <main className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden px-4 bg-[#0b1120] text-white">
-
-      {/* Glow blob — top right */}
-      <div
-        className="pointer-events-none absolute -top-20 -right-20 h-[70vh] w-[65vw]"
-        style={{
-          background:
-            "radial-gradient(ellipse at 70% 20%, rgba(255,255,255,0.92) 0%, rgba(140,232,212,0.82) 18%, rgba(80,196,210,0.55) 40%, rgba(60,120,210,0.18) 62%, transparent 78%)",
-          filter: "blur(2px)",
-        }}
-      />
+    <main
+      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden px-4 text-white"
+      style={{
+        background: `
+          radial-gradient(ellipse 90% 80% at 85% 10%, rgba(255,255,255,0.88) 0%, rgba(140,232,212,0.72) 18%, rgba(80,196,210,0.4) 38%, rgba(50,110,200,0.15) 58%, transparent 75%),
+          radial-gradient(ellipse 60% 50% at 100% 60%, rgba(60,160,180,0.2) 0%, transparent 60%),
+          #0b1120
+        `,
+      }}
+    >
 
       {/* Subtle stars in the transition zone */}
       {[
@@ -47,13 +46,17 @@ export default async function LandingPage() {
       <div className="relative z-10 max-w-2xl w-full text-center space-y-7">
 
         {/* Badge */}
-        <div className="inline-block rounded-full border border-white/20 bg-white/10 px-4 py-1 text-xs font-medium text-white/80 backdrop-blur-sm">
+        <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-medium text-white/80 backdrop-blur-sm">
+          <span className="h-1.5 w-1.5 rounded-full bg-[#AFDED4] animate-pulse" />
           now in early access
         </div>
 
         {/* Title */}
-        <h1 className="text-6xl sm:text-7xl font-bold tracking-tight text-white">
-          AIS Soup <span className="text-[#AFDED4]">v1</span>
+        <h1 className="text-6xl sm:text-7xl font-bold tracking-tight text-white inline-flex items-center gap-4 flex-wrap justify-center">
+          AIS Soup
+          <span className="inline-flex items-center rounded-full border border-[#AFDED4]/40 bg-[#AFDED4]/15 px-4 py-1 text-4xl sm:text-5xl font-semibold text-[#AFDED4] backdrop-blur-sm">
+            v1
+          </span>
         </h1>
 
         {/* Tagline */}
