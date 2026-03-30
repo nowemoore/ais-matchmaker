@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -209,36 +209,84 @@ export default function QuizClient({ userId }: Props) {
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
-const glassStyle = {
+const inputClass =
+  "w-full rounded-xl border border-white/15 px-4 py-2.5 text-sm text-white placeholder:text-white/30 focus:border-[#AFDED4]/50 focus:outline-none focus:ring-1 focus:ring-[#AFDED4]/30";
+
+const glassInputStyle = {
   background: "rgba(255,255,255,0.07)",
   backdropFilter: "blur(12px)",
   WebkitBackdropFilter: "blur(12px)",
-  colorScheme: "dark" as const,
 };
 
-const selectClass =
-  "w-full appearance-none rounded-xl border border-white/15 px-4 py-2.5 pr-8 text-sm text-white/90 focus:border-[#AFDED4]/50 focus:outline-none focus:ring-1 focus:ring-[#AFDED4]/30 cursor-pointer";
+// Fully custom glass dropdown — native <select> can't be styled dark
+function CustomSelect({ options, value, onChange, placeholder }: {
+  options: { label: string; value: string }[];
+  value: string | undefined;
+  onChange: (v: string) => void;
+  placeholder?: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const selected = options.find((o) => o.value === value);
 
-const inputClass =
-  "w-full rounded-xl border border-white/15 px-4 py-2.5 text-sm text-white/90 placeholder:text-white/30 focus:border-[#AFDED4]/50 focus:outline-none focus:ring-1 focus:ring-[#AFDED4]/30";
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  return (
+    <div ref={ref} className="relative w-full">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="flex w-full items-center justify-between rounded-xl border border-white/15 px-4 py-2.5 text-sm text-left transition-colors hover:border-white/30"
+        style={glassInputStyle}
+      >
+        <span className={selected ? "text-white" : "text-white/30"}>
+          {selected ? selected.label : (placeholder ?? "Select an option…")}
+        </span>
+        <FontAwesomeIcon
+          icon={faCircleChevronLeft}
+          className="w-3.5 h-3.5 text-white/30 flex-shrink-0"
+          style={{ transform: open ? "rotate(90deg)" : "rotate(270deg)", transition: "transform 0.2s" }}
+        />
+      </button>
+
+      {open && (
+        <div
+          className="absolute z-20 mt-1 w-full rounded-xl border border-white/15 py-1 shadow-xl max-h-52 overflow-y-auto"
+          style={{ background: "rgba(11,17,32,0.92)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)" }}
+        >
+          {options.map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => { onChange(opt.value); setOpen(false); }}
+              className={`w-full px-4 py-2 text-left text-sm transition-colors hover:bg-white/10 ${
+                value === opt.value ? "text-[#AFDED4]" : "text-white/70"
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 function DropdownInput({ question, value, onChange }: {
   question: QuizQuestion; value: string | undefined; onChange: (v: string) => void;
 }) {
   return (
-    <div className="relative">
-      <select value={value ?? ""} onChange={(e) => onChange(e.target.value)} className={selectClass} style={glassStyle}>
-        <option value="" disabled className="bg-[#0b1120]">Select an option…</option>
-        {question.options?.map((opt) => (
-          <option key={opt.value} value={opt.value} className="bg-[#0b1120]">{opt.label}</option>
-        ))}
-      </select>
-      <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-white/30">
-        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-      </div>
-    </div>
+    <CustomSelect
+      options={question.options?.map((o) => ({ label: o.label, value: o.value })) ?? []}
+      value={value}
+      onChange={onChange}
+    />
   );
 }
 
@@ -251,26 +299,19 @@ function LocationInput({ question, country, city, onCountry, onCity }: {
 }) {
   return (
     <div className="space-y-3">
-      <div className="relative">
-        <select value={country ?? ""} onChange={(e) => onCountry(e.target.value)} className={selectClass}>
-          <option value="" disabled className="bg-[#0b1120]">Select a country…</option>
-          {question.options?.map((opt) => (
-            <option key={opt.value} value={opt.value} className="bg-[#0b1120]">{opt.label}</option>
-          ))}
-        </select>
-        <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-white/30">
-          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
-        </div>
-      </div>
+      <CustomSelect
+        options={question.options?.map((o) => ({ label: o.label, value: o.value })) ?? []}
+        value={country}
+        onChange={onCountry}
+        placeholder="Select a country…"
+      />
       <input
         type="text"
         value={city ?? ""}
         onChange={(e) => onCity(e.target.value)}
         placeholder="City (optional)"
         className={inputClass}
-        style={glassStyle}
+        style={glassInputStyle}
       />
     </div>
   );
@@ -333,6 +374,7 @@ function FreeTextInput({ question, value, onChange }: {
       onChange={(e) => onChange(e.target.value)}
       placeholder={question.placeholder ?? "Type your answer…"}
       className={inputClass}
+      style={glassInputStyle}
     />
   );
 }
