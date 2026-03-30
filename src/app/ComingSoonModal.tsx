@@ -6,14 +6,27 @@ import { faChevronDown, faCircleChevronDown, faXmark } from "@fortawesome/free-s
 
 const ITEMS = [
   {
-    question: "What can FAISBOOK do for you today?",
+    
+    question: "What is FAISBOOK?",
     answer:
-      "Take the quiz to build your profile — your cause areas, working style, and what you're looking for. Once enough people have signed up, we'll surface your top matches based on compatibility. Think of it as a starting point for conversations that actually matter.",
+      "FAISBOOK is a matchmaking platform for the EA/AIS community. Tell us a bit about yourself and what you're looking for, and we'll connect you with people who can help accelerate your impact.",
   },
   {
-    question: "What can you expect?",
+    
+    question: "Why is FAISBOOK?",
     answer:
-      "We're in early access, so the matching algorithm is being calibrated with real data. Upcoming: in-app messaging, curated cohorts, event recommendations, and a map of who's working on what across the EA/AIS space.",
+      "It's hard to make meaningful contributions to AIS without strong connections to the community and competent collaborators. We want AIS-aligned and AIS-curious people to go beyond learning about important problems and start solving them together. FAISBOOK was created at BlueDot's Field-Building Hackathon to make this easier.",
+  },
+  {
+    
+    question: "What can FAISBOOK do for you today?",
+    answer:
+      "At this early stage, you can create and edit your profile, and get notified as soon as we have a match for you. We're currently focused on building a strong mapping of the AIS community and aim to make many warm introductions soon!",
+  },
+  {
+    question: "What can you expect from FAISBOOK in the future?",
+    answer:
+      "In addition to getting not",
   },
 ];
 
@@ -42,9 +55,9 @@ export default function ComingSoonModal() {
     <>
       <button
         onClick={handleOpen}
-        className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/8 px-8 py-3.5 text-base font-semibold text-white/80 backdrop-blur-md hover:bg-white/15 transition-colors"
+        className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/8 px-8 py-3.5 text-base text-white/80 backdrop-blur-md hover:bg-white/15 transition-colors"
       >
-        See what&apos;s coming
+        tell me more first
       </button>
 
       {open && (
