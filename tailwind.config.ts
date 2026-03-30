@@ -9,8 +9,19 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        cream: "#E0D4B4",
+        brown: {
+          DEFAULT: "#4C4637",
+          light:   "#6b5f4e",
+          muted:   "#8a7d6b",
+        },
+        taupe: "#B2AB99",
+        mint:  "#AFDED4",
+        sage: {
+          DEFAULT: "#79A79E",
+          dark:    "#5f8b83",
+          light:   "#c8e8e3",
+        },
       },
     },
   },
