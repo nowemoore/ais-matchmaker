@@ -77,7 +77,7 @@ export default async function LandingPage() {
           <div className="flex items-end justify-center gap-3">
             {/* invisible mirror of the v1 chip to balance the layout */}
             <span className="invisible inline-flex items-center px-3 py-0.5 text-xl font-medium mb-1.5" aria-hidden>
-              v1
+              v1.0
             </span>
             <h1 className="text-6xl sm:text-7xl font-bold tracking-tight text-white leading-none">
               AIS Soup
