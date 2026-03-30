@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleChevronLeft, faCircleChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { faCircleChevronLeft, faCircleChevronRight, faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import quizConfig from "@/data/quiz.json";
 import { buildTagVector } from "@/lib/quiz";
 import { createClient } from "@/lib/supabase/client";
@@ -103,20 +103,18 @@ export default function QuizClient({ userId }: Props) {
           </div>
         </div>
 
-        {/* Card */}
+        {/* Card — fixed height so layout doesn't jump between questions */}
         <div
-          className="rounded-2xl border border-white/15 p-8 space-y-6 shadow-xl"
-          style={{ background: "rgba(255,255,255,0.06)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)" }}
+          className="rounded-2xl border border-white/15 p-8 shadow-xl flex flex-col"
+          style={{ height: "22rem", background: "rgba(255,255,255,0.06)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)" }}
         >
-          <div className="space-y-1.5">
+          <div className="space-y-1.5 mb-6">
             <h2 className="text-xl font-semibold leading-snug text-white">
               {question.text}
             </h2>
             {question.hint && <p className="text-sm text-white/50">{question.hint}</p>}
-            {!question.required && (
-              <p className="text-xs text-white/30 italic">Optional — feel free to skip</p>
-            )}
           </div>
+          <div className="flex-1 overflow-y-auto">
 
           {question.type === "dropdown" && (
             <DropdownInput
@@ -171,16 +169,17 @@ export default function QuizClient({ userId }: Props) {
               {error}
             </p>
           )}
+          </div>{/* end flex-1 scroll */}
         </div>
 
-        {/* Navigation */}
-        <div className="flex items-center justify-between">
+        {/* Navigation — both chevrons centred together */}
+        <div className="flex items-center justify-center gap-6">
           <button
             onClick={handleBack}
             disabled={currentIndex === 0}
             className="text-white/40 hover:text-white/80 transition-colors disabled:cursor-not-allowed disabled:opacity-20"
           >
-            <FontAwesomeIcon icon={faCircleChevronLeft} className="w-9 h-9" />
+            <FontAwesomeIcon icon={faCircleChevronLeft} className="w-11 h-11" />
           </button>
 
           {onFinal ? (
@@ -198,7 +197,7 @@ export default function QuizClient({ userId }: Props) {
               disabled={!canProceed()}
               className="text-white/40 hover:text-white/80 transition-colors disabled:cursor-not-allowed disabled:opacity-20"
             >
-              <FontAwesomeIcon icon={faCircleChevronRight} className="w-9 h-9" />
+              <FontAwesomeIcon icon={faCircleChevronRight} className="w-11 h-11" />
             </button>
           )}
         </div>
@@ -335,7 +334,7 @@ function MultiSelectInput({ question, selected, onToggle }: {
                 : "border-white/15 bg-white/5 text-white/60 hover:border-white/30 hover:bg-white/10"
             }`}
           >
-            {active && <span className="mr-1 text-[#AFDED4]">✓</span>}
+            {active && <FontAwesomeIcon icon={faCircleCheck} className="mr-1.5 w-3.5 h-3.5 text-[#AFDED4]" />}
             {opt.label}
           </button>
         );
