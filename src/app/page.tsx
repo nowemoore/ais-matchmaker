@@ -5,7 +5,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faShield,
   faBrain,
-  faBiohazard,
   faLandmark,
   faUserGraduate,
   faGlobe,
@@ -74,13 +73,19 @@ export default async function LandingPage() {
           {/* Rotating question */}
           <RotatingQuestion />
 
-          {/* Title — v1 chip sits on the text baseline */}
-          <h1 className="text-6xl sm:text-7xl font-bold tracking-tight text-white flex items-end justify-center gap-3 flex-wrap leading-none">
-            AIS Soup
-            <span className="inline-flex items-center rounded-full border border-[#AFDED4]/50 bg-[#AFDED4]/10 px-3 py-0.5 text-xl font-medium text-[#AFDED4] backdrop-blur-sm tracking-normal mb-1.5">
-              v1.0.0
+          {/* Title — "AIS Soup" is truly centered; v1 chip hangs to its right */}
+          <div className="flex items-end justify-center gap-3">
+            {/* invisible mirror of the v1 chip to balance the layout */}
+            <span className="invisible inline-flex items-center px-3 py-0.5 text-xl font-medium mb-1.5" aria-hidden>
+              v1
             </span>
-          </h1>
+            <h1 className="text-6xl sm:text-7xl font-bold tracking-tight text-white leading-none">
+              AIS Soup
+            </h1>
+            <span className="inline-flex items-center rounded-full border border-[#AFDED4]/50 bg-[#AFDED4]/10 px-3 py-0.5 text-xl font-medium text-[#AFDED4] backdrop-blur-sm tracking-normal mb-1.5">
+              v1
+            </span>
+          </div>
 
           {/* Tagline */}
           <p className="text-lg sm:text-xl text-white/70 max-w-xl mx-auto leading-relaxed">
@@ -107,8 +112,8 @@ export default async function LandingPage() {
             )}
           </div>
 
-          {/* Chips with icons */}
-          <div className="flex flex-wrap justify-center gap-2 pt-2">
+          {/* Chips with icons — single row, scroll on small screens */}
+          <div className="flex flex-nowrap justify-center gap-2 pt-2 overflow-x-auto pb-1 scrollbar-none">
             {CHIPS.map(({ label, icon }) => (
               <span
                 key={label}
