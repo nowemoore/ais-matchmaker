@@ -83,7 +83,7 @@ export default function QuizClient({ userId }: Props) {
         href="/"
         className="absolute top-6 left-6 inline-flex items-center gap-2 text-sm text-white/50 hover:text-white/90 transition-colors"
       >
-        <FontAwesomeIcon icon={faChevronLeft} className="w-3 h-3" />
+        <FontAwesomeIcon icon={faCircleChevronLeft} className="w-3 h-3" />
         Home
       </Link>
 
