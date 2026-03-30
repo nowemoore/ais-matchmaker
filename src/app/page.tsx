@@ -80,7 +80,7 @@ export default async function LandingPage() {
               v1.0
             </span>
             <h1
-              className="text-6xl sm:text-7xl tracking-tight leading-none"
+              className="text-6xl sm:text-7xl tracking-tight leading-none my-8"
               style={{ fontFamily: "'Boldonse', system-ui" }}
             >
               <span style={{ color: "#AFDED4" }}>F</span>
@@ -135,7 +135,7 @@ export default async function LandingPage() {
 
       {/* Footer */}
       <p className="relative z-10 pb-6 text-center text-sm text-white/35">
-        built with Claude for the AIS community
+        &#183; built with Claude for the AIS community &#183;
       </p>
     </main>
   );
