@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronDown, faChevronRight, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faXmark } from "@fortawesome/free-solid-svg-icons";
 
 const ITEMS = [
   {
@@ -57,25 +57,26 @@ export default function ComingSoonModal() {
 
             <h2 className="mb-6 text-lg font-semibold text-white/90">Coming soon</h2>
 
-            <div className="space-y-3">
+            <div className="space-y-5">
               {ITEMS.map((item, i) => (
-                <div
-                  key={i}
-                  className="rounded-xl border border-white/10 overflow-hidden"
-                  style={{ background: "rgba(255,255,255,0.05)" }}
-                >
+                <div key={i}>
                   <button
-                    className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left text-sm font-medium text-white/80 hover:text-white transition-colors"
+                    className="flex w-full items-center justify-between gap-4 text-left"
                     onClick={() => setExpanded(expanded === i ? null : i)}
                   >
-                    {item.question}
-                    <FontAwesomeIcon
-                      icon={expanded === i ? faChevronDown : faChevronRight}
-                      className="w-3 h-3 flex-shrink-0 text-[#AFDED4]/70 transition-transform"
-                    />
+                    <span className="text-sm font-medium text-white/80 hover:text-white transition-colors">
+                      {item.question}
+                    </span>
+                    <span className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full border border-white/20 bg-white/10">
+                      <FontAwesomeIcon
+                        icon={expanded === i ? faChevronDown : faChevronDown}
+                        className="w-2.5 h-2.5 text-[#AFDED4]"
+                        style={{ transform: expanded === i ? "rotate(0deg)" : "rotate(-90deg)", transition: "transform 0.2s" }}
+                      />
+                    </span>
                   </button>
                   {expanded === i && (
-                    <p className="px-5 pb-4 text-sm text-white/55 leading-relaxed">
+                    <p className="mt-2 text-sm text-white/50 leading-relaxed">
                       {item.answer}
                     </p>
                   )}
