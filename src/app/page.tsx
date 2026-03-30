@@ -115,7 +115,7 @@ export default async function LandingPage() {
         </div>
 
         {/* Chips — outside max-w-2xl so all fit on one line */}
-        <div className="flex flex-nowrap justify-center gap-2 pt-2">
+        <div className="flex flex-nowrap justify-center gap-2 mt-8">
           {CHIPS.map(({ label, icon }) => (
             <span
               key={label}
