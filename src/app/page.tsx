@@ -81,10 +81,10 @@ export default async function LandingPage() {
             </span>
             <h1
               className="text-6xl sm:text-7xl tracking-tight leading-none"
-              style={{ fontFamily: "'Badeen Display', sans-serif" }}
+              style={{ fontFamily: "'Rubik Dirt', system-ui" }}
             >
               <span className="text-white">AIS </span>
-              <span style={{ color: "#AFDED4" }}>Soup</span>
+              <span style={{ color: "#AFDED4" }}>BOOK</span>
             </h1>
             <span className="inline-flex items-center rounded-full border border-[#AFDED4]/50 bg-[#AFDED4]/10 px-3 py-0.5 text-xl font-medium text-[#AFDED4] backdrop-blur-sm tracking-normal mb-1.5">
               v1.0
