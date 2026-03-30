@@ -15,7 +15,6 @@ import {
 const CHIPS = [
   { label: "AI Safety",           icon: faShield },
   { label: "Alignment Research",  icon: faBrain },
-  { label: "Biorisk",             icon: faBiohazard },
   { label: "Governance & Policy", icon: faLandmark },
   { label: "Mentorship",          icon: faUserGraduate },
   { label: "EA Community",        icon: faGlobe },
@@ -121,7 +120,7 @@ export default async function LandingPage() {
 
       {/* Footer */}
       <p className="relative z-10 pb-6 text-center text-sm text-white/35">
-        Built for the longtermist community
+        built with Claude for the AIS community
       </p>
     </main>
   );
