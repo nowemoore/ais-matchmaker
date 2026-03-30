@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import RotatingQuestion from "./RotatingQuestion";
+import ComingSoonModal from "./ComingSoonModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faShield,
@@ -73,6 +74,7 @@ export default async function LandingPage() {
           {/* Rotating question */}
           <RotatingQuestion />
 
+
           {/* Title — "AIS Soup" is truly centered; v1 chip hangs to its right */}
           <div className="flex items-end justify-center gap-3">
             {/* invisible mirror of the v1 chip to balance the layout */}
@@ -107,14 +109,7 @@ export default async function LandingPage() {
               Take the Quiz
               <FontAwesomeIcon icon={faChevronRight} className="w-3.5 h-3.5" />
             </Link>
-            {user && (
-              <Link
-                href="/matches"
-                className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/8 px-8 py-3.5 text-base font-semibold text-white/80 backdrop-blur-md hover:bg-white/15 transition-colors"
-              >
-                View My Matches
-              </Link>
-            )}
+            <ComingSoonModal />
           </div>
 
         </div>
