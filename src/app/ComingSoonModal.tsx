@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronDown, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faCircleChevronDown, faXmark } from "@fortawesome/free-solid-svg-icons";
 
 const ITEMS = [
   {
@@ -88,10 +88,9 @@ export default function ComingSoonModal() {
                     <span className="text-sm font-medium text-white/80 hover:text-white transition-colors">
                       {item.question}
                     </span>
-                    <span className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full border border-white/20 bg-white/10">
+                    <span className="flex-shrink-0 flex items-center justify-center w-6 h-6">
                       <FontAwesomeIcon
-                        icon={faChevronDown}
-                        className="w-2.5 h-2.5 text-[#AFDED4]"
+                        icon={faCircleChevronDown}
                         style={{
                           transform: expanded === i ? "rotate(180deg)" : "rotate(0deg)",
                           transition: "transform 0.25s ease",
@@ -107,7 +106,7 @@ export default function ComingSoonModal() {
                     }}
                   >
                     <div style={{ overflow: "hidden" }}>
-                      <p className="pt-2 text-sm text-white/50 leading-relaxed">
+                      <p className="pt-2 text-sm text-white/50 leading-relaxed text-left">
                         {item.answer}
                       </p>
                     </div>
