@@ -4,7 +4,7 @@
       "id": "q_location",
       "section": "About You",
       "text": "Where are you based?",
-      "type": "dropdown",
+      "type": "location",
       "required": false,
       "options": [
         { "label": "United States", "value": "usa", "weights": {} },
