@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import RotatingQuestion from "./RotatingQuestion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faShield,
@@ -69,6 +70,9 @@ export default async function LandingPage() {
               now in early access
             </div>
           </div>
+
+          {/* Rotating question */}
+          <RotatingQuestion />
 
           {/* Title — v1 chip sits on the text baseline */}
           <h1 className="text-6xl sm:text-7xl font-bold tracking-tight text-white flex items-end justify-center gap-3 flex-wrap leading-none">
