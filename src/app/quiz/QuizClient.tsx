@@ -81,9 +81,9 @@ export default function QuizClient({ userId }: Props) {
       {/* Back to home */}
       <Link
         href="/"
-        className="absolute top-6 left-6 inline-flex text-2xl items-center gap-2 text-white/50 hover:text-white/90 transition-colors"
+        className="absolute top-6 left-6 inline-flex items-center gap-2 text-sm text-white/50 hover:text-white/90 transition-colors"
       >
-        <FontAwesomeIcon icon={faCircleChevronLeft} className="text-2xl" />
+        <FontAwesomeIcon icon={faCircleChevronLeft} className="w-3 h-3" />
         Home
       </Link>
 
@@ -91,7 +91,7 @@ export default function QuizClient({ userId }: Props) {
 
         {/* Progress */}
         <div className="space-y-1.5">
-          <div className="flex justify-between text-xs text-white/40">
+          <div className="flex justify-between text-sm text-white/40">
             <span>{question.section}</span>
             <span>{currentIndex + 1} of {total}</span>
           </div>
@@ -109,10 +109,10 @@ export default function QuizClient({ userId }: Props) {
           style={{ height: "22rem", background: "rgba(255,255,255,0.06)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)" }}
         >
           <div className="space-y-1.5 mb-6">
-            <h2 className="text-xl font-semibold leading-snug text-white">
+            <h2 className="text-2xl font-semibold leading-snug text-white">
               {question.text}
             </h2>
-            {question.hint && <p className="text-sm text-white/50">{question.hint}</p>}
+            {question.hint && <p className="text-base text-white/50">{question.hint}</p>}
           </div>
           <div className="flex-1 flex items-center overflow-y-auto">
             <div className="w-full">
@@ -181,7 +181,7 @@ export default function QuizClient({ userId }: Props) {
             disabled={currentIndex === 0}
             className="text-white/40 hover:text-white/80 transition-colors disabled:cursor-not-allowed disabled:opacity-20"
           >
-            <FontAwesomeIcon icon={faCircleChevronLeft} className="w-20 h-20" />
+            <FontAwesomeIcon icon={faCircleChevronLeft} className="w-16 h-16" />
           </button>
 
           {onFinal ? (
@@ -199,7 +199,7 @@ export default function QuizClient({ userId }: Props) {
               disabled={!canProceed()}
               className="text-white/40 hover:text-white/80 transition-colors disabled:cursor-not-allowed disabled:opacity-20"
             >
-              <FontAwesomeIcon icon={faCircleChevronRight} className="w-14 h-14" />
+              <FontAwesomeIcon icon={faCircleChevronRight} className="w-16 h-16" />
             </button>
           )}
         </div>
@@ -211,7 +211,7 @@ export default function QuizClient({ userId }: Props) {
 // ── Sub-components ────────────────────────────────────────────────────────────
 
 const inputClass =
-  "w-full rounded-xl border border-white/15 px-4 py-2.5 text-sm text-white placeholder:text-white/30 focus:border-[#AFDED4]/50 focus:outline-none focus:ring-1 focus:ring-[#AFDED4]/30";
+  "w-full rounded-xl border border-white/15 px-4 py-3 text-base text-white placeholder:text-white/30 focus:border-[#AFDED4]/50 focus:outline-none focus:ring-1 focus:ring-[#AFDED4]/30";
 
 const glassInputStyle = {
   background: "rgba(255,255,255,0.07)",
@@ -243,7 +243,7 @@ function CustomSelect({ options, value, onChange, placeholder }: {
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center justify-between rounded-xl border border-white/15 px-4 py-2.5 text-sm text-left transition-colors hover:border-white/30"
+        className="flex w-full items-center justify-between rounded-xl border border-white/15 px-4 py-3 text-base text-left transition-colors hover:border-white/30"
         style={glassInputStyle}
       >
         <span className={selected ? "text-white" : "text-white/30"}>
@@ -266,7 +266,7 @@ function CustomSelect({ options, value, onChange, placeholder }: {
               key={opt.value}
               type="button"
               onClick={() => { onChange(opt.value); setOpen(false); }}
-              className={`w-full px-4 py-2 text-left text-sm transition-colors hover:bg-white/10 ${
+              className={`w-full px-4 py-2.5 text-left text-base transition-colors hover:bg-white/10 ${
                 value === opt.value ? "text-[#AFDED4]" : "text-white/70"
               }`}
             >
@@ -330,7 +330,7 @@ function MultiSelectInput({ question, selected, onToggle }: {
             key={opt.value}
             type="button"
             onClick={() => onToggle(opt.value)}
-            className={`rounded-full border px-3 py-1.5 text-sm font-medium transition-all ${
+            className={`rounded-full border px-4 py-2 text-base font-medium transition-all ${
               active
                 ? "border-[#AFDED4]/60 bg-[#AFDED4]/15 text-[#AFDED4]"
                 : "border-white/15 bg-white/5 text-white/60 hover:border-white/30 hover:bg-white/10"
@@ -356,7 +356,7 @@ function SliderInput({ question, value, onChange }: {
         onChange={(e) => onChange(Number(e.target.value) / 100)}
         className="w-full cursor-pointer accent-[#AFDED4]"
       />
-      <div className="flex justify-between text-xs text-white/40">
+      <div className="flex justify-between text-sm text-white/40">
         <span>{question.sliderMin}</span>
         <span className="text-[#AFDED4]/70">{pct}%</span>
         <span>{question.sliderMax}</span>
