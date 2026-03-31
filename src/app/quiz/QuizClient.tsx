@@ -81,9 +81,9 @@ export default function QuizClient({ userId }: Props) {
       {/* Back to home */}
       <Link
         href="/"
-        className="absolute top-6 left-6 inline-flex items-center gap-2 text-sm text-white/50 hover:text-white/90 transition-colors"
+        className="absolute top-6 left-6 inline-flex text-2xl items-center gap-2 text-white/50 hover:text-white/90 transition-colors"
       >
-        <FontAwesomeIcon icon={faCircleChevronLeft} className="w- h-30" />
+        <FontAwesomeIcon icon={faCircleChevronLeft} className="text-2xl" />
         Home
       </Link>
 
