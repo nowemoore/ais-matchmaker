@@ -114,7 +114,8 @@ export default function QuizClient({ userId }: Props) {
             </h2>
             {question.hint && <p className="text-sm text-white/50">{question.hint}</p>}
           </div>
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 flex items-center overflow-y-auto">
+            <div className="w-full">
 
           {question.type === "dropdown" && (
             <DropdownInput
@@ -165,11 +166,12 @@ export default function QuizClient({ userId }: Props) {
           )}
 
           {error && (
-            <p className="rounded-lg border border-red-400/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">
+            <p className="rounded-lg border border-red-400/30 bg-red-500/10 px-3 py-2 text-sm text-red-300 mt-3">
               {error}
             </p>
           )}
-          </div>{/* end flex-1 scroll */}
+            </div>
+          </div>{/* end flex-1 */}
         </div>
 
         {/* Navigation — both chevrons centred together */}
@@ -179,7 +181,7 @@ export default function QuizClient({ userId }: Props) {
             disabled={currentIndex === 0}
             className="text-white/40 hover:text-white/80 transition-colors disabled:cursor-not-allowed disabled:opacity-20"
           >
-            <FontAwesomeIcon icon={faCircleChevronLeft} className="w-11 h-11" />
+            <FontAwesomeIcon icon={faCircleChevronLeft} className="w-14 h-14" />
           </button>
 
           {onFinal ? (
@@ -197,7 +199,7 @@ export default function QuizClient({ userId }: Props) {
               disabled={!canProceed()}
               className="text-white/40 hover:text-white/80 transition-colors disabled:cursor-not-allowed disabled:opacity-20"
             >
-              <FontAwesomeIcon icon={faCircleChevronRight} className="w-11 h-11" />
+              <FontAwesomeIcon icon={faCircleChevronRight} className="w-14 h-14" />
             </button>
           )}
         </div>
