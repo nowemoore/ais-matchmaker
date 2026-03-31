@@ -109,7 +109,7 @@ export default function QuizClient({ userId }: Props) {
           style={{ height: "22rem", background: "rgba(255,255,255,0.06)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)" }}
         >
           <div className="space-y-1.5 mb-6">
-            <h2 className="text-2xl font-semibold leading-snug text-white">
+            <h2 className="text-xl font-semibold leading-snug text-white">
               {question.text}
             </h2>
             {question.hint && <p className="text-base text-white/50">{question.hint}</p>}
@@ -211,7 +211,7 @@ export default function QuizClient({ userId }: Props) {
 // ── Sub-components ────────────────────────────────────────────────────────────
 
 const inputClass =
-  "w-full rounded-xl border border-white/15 px-4 py-3 text-base text-white placeholder:text-white/30 focus:border-[#AFDED4]/50 focus:outline-none focus:ring-1 focus:ring-[#AFDED4]/30";
+  "w-full rounded-xl border border-white/15 px-4 py-3 text-lg text-white placeholder:text-white/30 focus:border-[#AFDED4]/50 focus:outline-none focus:ring-1 focus:ring-[#AFDED4]/30";
 
 const glassInputStyle = {
   background: "rgba(255,255,255,0.07)",
@@ -243,7 +243,7 @@ function CustomSelect({ options, value, onChange, placeholder }: {
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center justify-between rounded-xl border border-white/15 px-4 py-3 text-base text-left transition-colors hover:border-white/30"
+        className="flex w-full items-center justify-between rounded-xl border border-white/15 px-4 py-3 text-lg text-left transition-colors hover:border-white/30"
         style={glassInputStyle}
       >
         <span className={selected ? "text-white" : "text-white/30"}>
@@ -266,7 +266,7 @@ function CustomSelect({ options, value, onChange, placeholder }: {
               key={opt.value}
               type="button"
               onClick={() => { onChange(opt.value); setOpen(false); }}
-              className={`w-full px-4 py-2.5 text-left text-base transition-colors hover:bg-white/10 ${
+              className={`w-full px-4 py-2.5 text-left text-lg transition-colors hover:bg-white/10 ${
                 value === opt.value ? "text-[#AFDED4]" : "text-white/70"
               }`}
             >
@@ -330,7 +330,7 @@ function MultiSelectInput({ question, selected, onToggle }: {
             key={opt.value}
             type="button"
             onClick={() => onToggle(opt.value)}
-            className={`rounded-full border px-4 py-2 text-base font-medium transition-all ${
+            className={`rounded-full border px-4 py-2 text-lg font-medium transition-all ${
               active
                 ? "border-[#AFDED4]/60 bg-[#AFDED4]/15 text-[#AFDED4]"
                 : "border-white/15 bg-white/5 text-white/60 hover:border-white/30 hover:bg-white/10"
