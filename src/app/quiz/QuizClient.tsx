@@ -83,7 +83,7 @@ export default function QuizClient({ userId }: Props) {
         href="/"
         className="absolute top-6 left-6 inline-flex items-center gap-2 text-sm text-white/50 hover:text-white/90 transition-colors"
       >
-        <FontAwesomeIcon icon={faCircleChevronLeft} className="w-3 h-3" />
+        <FontAwesomeIcon icon={faCircleChevronLeft} className="w- h-3" />
         Home
       </Link>
 
@@ -181,7 +181,7 @@ export default function QuizClient({ userId }: Props) {
             disabled={currentIndex === 0}
             className="text-white/40 hover:text-white/80 transition-colors disabled:cursor-not-allowed disabled:opacity-20"
           >
-            <FontAwesomeIcon icon={faCircleChevronLeft} className="w-14 h-14" />
+            <FontAwesomeIcon icon={faCircleChevronLeft} className="w-20 h-20" />
           </button>
 
           {onFinal ? (
