@@ -81,7 +81,7 @@ export default function QuizClient({ userId }: Props) {
       {/* Back to home */}
       <Link
         href="/"
-        className="absolute top-6 left-6 inline-flex items-center gap-2 text-sm text-white/50 hover:text-white/90 transition-colors"
+        className="absolute top-6 left-6 inline-flex items-center gap-2 text-xl text-white/50 hover:text-white/90 transition-colors"
       >
         <FontAwesomeIcon icon={faCircleChevronLeft} className="w-3 h-3" />
         Home
@@ -105,7 +105,7 @@ export default function QuizClient({ userId }: Props) {
 
         {/* Card — fixed height so layout doesn't jump between questions */}
         <div
-          className="rounded-2xl border border-white/15 p-8 shadow-xl flex flex-col"
+          className="rounded-2xl border border-white/15 p-8 shadow-xl flex flex-col overflow-visible"
           style={{ height: "22rem", background: "rgba(255,255,255,0.06)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)" }}
         >
           <div className="space-y-1.5 mb-6">
@@ -181,7 +181,7 @@ export default function QuizClient({ userId }: Props) {
             disabled={currentIndex === 0}
             className="text-white/40 hover:text-white/80 transition-colors disabled:cursor-not-allowed disabled:opacity-20"
           >
-            <FontAwesomeIcon icon={faCircleChevronLeft} className="w-16 h-16" />
+            <FontAwesomeIcon icon={faCircleChevronLeft} className="text-4xl" />
           </button>
 
           {onFinal ? (
@@ -191,7 +191,7 @@ export default function QuizClient({ userId }: Props) {
               className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/15 px-6 py-2.5 text-base font-semibold text-white backdrop-blur-md hover:bg-white/25 transition-colors disabled:cursor-not-allowed disabled:opacity-40 shadow-lg"
             >
               {saving ? "Finding your matches…" : "See My Matches"}
-              {!saving && <FontAwesomeIcon icon={faCircleChevronRight} className="w-4 h-4" />}
+              {!saving && <FontAwesomeIcon icon={faCircleChevronRight} className="text-4xl" />}
             </button>
           ) : (
             <button
@@ -199,7 +199,7 @@ export default function QuizClient({ userId }: Props) {
               disabled={!canProceed()}
               className="text-white/40 hover:text-white/80 transition-colors disabled:cursor-not-allowed disabled:opacity-20"
             >
-              <FontAwesomeIcon icon={faCircleChevronRight} className="w-16 h-16" />
+              <FontAwesomeIcon icon={faCircleChevronRight} className="text-4xl" />
             </button>
           )}
         </div>
