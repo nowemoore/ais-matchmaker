@@ -91,7 +91,7 @@ export default function QuizClient({ userId }: Props) {
 
         {/* Progress */}
         <div className="space-y-1.5">
-          <div className="flex justify-between text-sm text-white/40">
+          <div className="flex justify-between text-base text-white/40">
             <span>{question.section}</span>
             <span>{currentIndex + 1} of {total}</span>
           </div>
@@ -188,7 +188,7 @@ export default function QuizClient({ userId }: Props) {
             <button
               onClick={handleSubmit}
               disabled={!canProceed() || saving}
-              className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/15 px-6 py-2.5 text-sm font-semibold text-white backdrop-blur-md hover:bg-white/25 transition-colors disabled:cursor-not-allowed disabled:opacity-40 shadow-lg"
+              className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/15 px-6 py-2.5 text-base font-semibold text-white backdrop-blur-md hover:bg-white/25 transition-colors disabled:cursor-not-allowed disabled:opacity-40 shadow-lg"
             >
               {saving ? "Finding your matches…" : "See My Matches"}
               {!saving && <FontAwesomeIcon icon={faCircleChevronRight} className="w-4 h-4" />}
