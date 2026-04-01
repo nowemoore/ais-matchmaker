@@ -107,9 +107,10 @@ export default function QuizClient({ userId, onBack }: Props) {
       if (q.type === "slider" && finalAnswers[q.id] === undefined) finalAnswers[q.id] = 0.5;
     }
     const tagVector = buildTagVector(config, finalAnswers);
-    const { error: dbError } = await supabase.from("quiz_responses").insert({
-      user_id: userId, answers: finalAnswers, tag_vector: tagVector,
-    });
+    const { error: dbError } = await supabase.from("quiz_responses").upsert(
+      { user_id: userId, answers: finalAnswers, tag_vector: tagVector },
+      { onConflict: "user_id" }
+    );
     if (dbError) { setError(dbError.message); setSaving(false); return; }
     router.push("/matches");
     router.refresh();
@@ -144,7 +145,7 @@ export default function QuizClient({ userId, onBack }: Props) {
         {/* Card */}
         <div
           className="rounded-2xl border border-white/15 p-8 shadow-xl flex flex-col overflow-visible"
-          style={{ height: "22rem", background: "rgba(255,255,255,0.06)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)" }}
+          style={{ minHeight: "22rem", background: "rgba(255,255,255,0.06)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)" }}
         >
           <AnimatePresence mode="wait">
             {transition ? (
@@ -286,7 +287,10 @@ function TransitionSlide({ text }: { text: string }) {
 // ── Shared styles ─────────────────────────────────────────────────────────────
 
 const inputClass =
-  "w-full rounded-xl border border-white/15 px-4 py-3 text-base text-white placeholder:text-white/30 focus:border-[#AFDED4]/50 focus:outline-none focus:ring-1 focus:ring-[#AFDED4]/30";
+  "w-full rounded-full border border-white/15 px-4 py-3 text-base text-white placeholder:text-white/30 focus:border-[#AFDED4]/50 focus:outline-none focus:ring-1 focus:ring-[#AFDED4]/30";
+
+const textareaClass =
+  "w-full rounded-2xl border border-white/15 px-4 py-3 text-base text-white placeholder:text-white/30 focus:border-[#AFDED4]/50 focus:outline-none focus:ring-1 focus:ring-[#AFDED4]/30 resize-none";
 
 const glassInputStyle = {
   background: "rgba(255,255,255,0.07)",
@@ -547,6 +551,7 @@ function SliderInput({ question, value, onChange }: {
         type="range" min={0} max={100} value={pct}
         onChange={(e) => onChange(Number(e.target.value) / 100)}
         className="w-full cursor-pointer"
+        style={{ "--fill-pct": `${pct}%` } as React.CSSProperties}
       />
       <div className="flex justify-between text-sm text-white/40">
         <span>{question.sliderMin}</span>
@@ -562,6 +567,7 @@ function FreeTextInput({ question, value, onChange }: {
   question: QuizQuestion; value: string; onChange: (v: string) => void;
 }) {
   const isAge = question.id === "q_age";
+  const isMultiline = !isAge;
   const num = parseInt(value);
   const ageError = isAge && value.length > 0
     ? num < 18 ? "Sorry, we can only match people aged 18 and over."
@@ -571,14 +577,25 @@ function FreeTextInput({ question, value, onChange }: {
 
   return (
     <div className="space-y-2">
-      <input
-        type={isAge ? "number" : "text"}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={question.placeholder ?? "Type your answer…"}
-        className={`${inputClass} ${isAge ? "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" : ""}`}
-        style={glassInputStyle}
-      />
+      {isMultiline ? (
+        <textarea
+          rows={4}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={question.placeholder ?? "Type your answer…"}
+          className={textareaClass}
+          style={glassInputStyle}
+        />
+      ) : (
+        <input
+          type="number"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={question.placeholder ?? "Type your answer…"}
+          className={`${inputClass} [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
+          style={glassInputStyle}
+        />
+      )}
       {ageError && (
         <p className="text-sm text-white/50 px-1">{ageError}</p>
       )}
