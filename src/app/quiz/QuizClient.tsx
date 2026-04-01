@@ -180,6 +180,7 @@ export default function QuizClient({ userId, onBack }: Props) {
               </div>
 
               <div className="flex-1 min-h-0 overflow-y-auto no-scrollbar">
+                <div className="min-h-full flex items-center">
                 <div className="w-full">
                   {question.type === "dropdown" && (
                     <DropdownInput
@@ -230,6 +231,7 @@ export default function QuizClient({ userId, onBack }: Props) {
                     </p>
                   )}
                 </div>
+                </div>
               </div>
               </motion.div>
             )}
@@ -258,8 +260,8 @@ export default function QuizClient({ userId, onBack }: Props) {
           ) : (
             <button
               onClick={handleNext}
-              disabled={!canProceed() && question.id !== "q_age"}
-              className={`transition-colors ${!canProceed() && question.id !== "q_age" ? "text-white/20 cursor-not-allowed" : "text-white/40 hover:text-white/80"}`}
+              disabled={!transition && !canProceed() && question.id !== "q_age"}
+              className={`transition-colors ${!transition && !canProceed() && question.id !== "q_age" ? "text-white/20 cursor-not-allowed" : "text-white/40 hover:text-white/80"}`}
             >
               <FontAwesomeIcon icon={faCircleChevronRight} className="text-4xl" />
             </button>
