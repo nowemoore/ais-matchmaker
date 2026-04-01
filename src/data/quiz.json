@@ -255,7 +255,7 @@
         },
         {
           "label": "not sure yet",
-          "value": "work_unsure",
+          "value": "ais_not_sure",
           "weights": {}
         }
       ]
@@ -338,7 +338,7 @@
         },
         {
           "label": "not sure yet",
-          "value": "toc_unsure",
+          "value": "toc_not_sure",
           "weights": {}
         }
       ]
@@ -400,7 +400,7 @@
         },
         {
           "label": "not sure yet",
-          "value": "work_unsure",
+          "value": "work_not_sure",
           "weights": {}
         }
       ]
