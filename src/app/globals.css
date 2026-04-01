@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Range slider — explicit styling so accent-color doesn't get ignored */
+/* Range slider */
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
@@ -13,7 +13,12 @@ input[type="range"] {
 input[type="range"]::-webkit-slider-runnable-track {
   height: 4px;
   border-radius: 999px;
-  background: rgba(255,255,255,0.15);
+  background: linear-gradient(
+    to right,
+    #81afa5 var(--fill-pct, 50%),
+    rgba(255,255,255,0.15) var(--fill-pct, 50%)
+  );
+  transition: background 0.1s;
 }
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
@@ -24,6 +29,19 @@ input[type="range"]::-webkit-slider-thumb {
   background: #81afa5;
   margin-top: -7px;
   box-shadow: 0 0 6px rgba(129,175,165,0.5);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+input[type="range"]:active::-webkit-slider-thumb,
+input[type="range"]:focus::-webkit-slider-thumb {
+  transform: scale(1.35);
+  box-shadow: 0 0 16px rgba(129,175,165,0.9);
+}
+input[type="range"]:active::-webkit-slider-runnable-track {
+  background: linear-gradient(
+    to right,
+    #81afa5 var(--fill-pct, 50%),
+    rgba(255,255,255,0.3) var(--fill-pct, 50%)
+  );
 }
 input[type="range"]::-moz-range-track {
   height: 4px;
@@ -37,6 +55,16 @@ input[type="range"]::-moz-range-thumb {
   border-radius: 50%;
   background: #81afa5;
   box-shadow: 0 0 6px rgba(129,175,165,0.5);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+input[type="range"]:active::-moz-range-thumb {
+  transform: scale(1.35);
+  box-shadow: 0 0 16px rgba(129,175,165,0.9);
+}
+input[type="range"]::-moz-range-progress {
+  height: 4px;
+  border-radius: 999px;
+  background: #81afa5;
 }
 
 /* Hide scrollbar — outside @layer so it wins over base layer rules */
