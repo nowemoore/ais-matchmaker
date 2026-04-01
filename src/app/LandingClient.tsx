@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -44,6 +44,12 @@ interface Props {
 
 export default function LandingClient({ userId }: Props) {
   const [showQuiz, setShowQuiz] = useState(false);
+
+  // Prevent body/html from scrolling — main handles it
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = ""; };
+  }, []);
 
   const handleCTA = () => {
     if (userId) {
