@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faShield, faBrain, faLandmark, faUserGraduate,
-  faGlobe, faCompass, faChevronCircleRight, faChevronDown, faHouse,
+  faShield, faBrain, faLandmark, faGlobe, faCompass, faChevronCircleRight, faChevronDown, faHouse,
+  faDragon,
 } from "@fortawesome/free-solid-svg-icons";
 import QuizClient from "./quiz/QuizClient";
 import RotatingQuestion from "./RotatingQuestion";
@@ -13,10 +13,10 @@ import RotatingQuestion from "./RotatingQuestion";
 const CHIPS = [
   { label: "AI Safety",           icon: faShield },
   { label: "Alignment Research",  icon: faBrain },
-  { label: "Governance & Policy", icon: faLandmark },
-  { label: "Mentorship",          icon: faUserGraduate },
+  { label: "AI Governance & Policy", icon: faLandmark },
+  { label: "Impact Acceleration",          icon: faDragon },
   { label: "EA Community",        icon: faGlobe },
-  { label: "Career Guidance",     icon: faCompass },
+  { label: "Career Progress",     icon: faCompass },
 ];
 
 const BG = {
@@ -106,7 +106,7 @@ export default function LandingClient({ userId }: Props) {
 
                 {/* Tagline */}
                 <p className="text-lg sm:text-xl text-white/70 max-w-xl mx-auto leading-relaxed">
-                  Connect with collaborators, mentors, and friends who share your
+                  Get matched with collaborators, mentors, and friends who share your
                   commitment to AI safety and other high-impact causes.
                 </p>
 

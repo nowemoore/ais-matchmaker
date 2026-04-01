@@ -42,37 +42,48 @@
     {
       "id": "q_cause_areas",
       "section": "Your Priorities",
-      "text": "What cause areas do you focus on?",
+      "text": "What cause areas are you ready to work on?",
       "hint": "Select all that apply.",
       "type": "multi_select",
       "required": true,
       "options": [
         { "label": "AI safety", "value": "ai_safety", "weights": { "ai_safety": 1.0 } },
-        { "label": "Biosecurity", "value": "biorisk", "weights": { "biorisk": 1.0 } },
-        { "label": "Global health & development", "value": "global_health", "weights": { "global_health": 1.0 } },
-        { "label": "Animal welfare", "value": "animal_welfare", "weights": { "animal_welfare": 1.0 } },
-        { "label": "Nuclear security", "value": "nuclear", "weights": { "nuclear": 1.0 } },
-        { "label": "Climate", "value": "climate", "weights": { "climate": 1.0 } },
-        { "label": "Mental health", "value": "mental_health", "weights": { "mental_health": 1.0 } },
-        { "label": "Other", "value": "cause_other", "weights": {} }
+        { "label": "biosecurity", "value": "biorisk", "weights": { "biorisk": 1.0 } },
+        { "label": "global health & development", "value": "global_health", "weights": { "global_health": 1.0 } },
+        { "label": "animal welfare", "value": "animal_welfare", "weights": { "animal_welfare": 1.0 } },
+        { "label": "nuclear security", "value": "nuclear", "weights": { "nuclear": 1.0 } },
+        { "label": "climate", "value": "climate", "weights": { "climate": 1.0 } },
+        { "label": "mental health", "value": "mental_health", "weights": { "mental_health": 1.0 } },
+        { "label": "other", "value": "cause_other", "weights": {} },
+        { "label": "not sure yet", "value": "cause_unsure", "weights": {} }
       ]
     },
     {
       "id": "q_ais_subareas",
       "section": "Your Priorities",
-      "text": "What sub-area of AI safety are you interested in?",
+      "text": "What areas of AI safety are you most interested in?",
       "hint": "Select all that apply.",
       "type": "multi_select",
       "required": false,
       "options": [
-        { "label": "Alignment", "value": "alignment", "weights": { "alignment": 1.0 } },
-        { "label": "Interpretability", "value": "interpretability", "weights": { "interpretability": 1.0 } },
-        { "label": "Governance & Policy", "value": "governance", "weights": { "governance": 1.0 } },
-        { "label": "Field-building", "value": "field_building", "weights": { "field_building": 1.0 } },
-        { "label": "AI comms & narrative", "value": "ai_comms", "weights": { "ai_comms": 1.0 } },
-        { "label": "Biosecurity research", "value": "biosec_research", "weights": { "biosec_research": 1.0 } },
-        { "label": "Global poverty", "value": "global_poverty", "weights": { "global_poverty": 1.0 } },
-        { "label": "Other", "value": "ais_sub_other", "weights": {} }
+        { "label": "mech interp", "value": "alignment", "weights": { "alignment": 1.0 } },
+        { "label": "governance", "value": "alignment", "weights": { "alignment": 1.0 } },
+        { "label": "evaluation science", "value": "alignment", "weights": { "alignment": 1.0 } },
+        { "label": "gradual disempowerment", "value": "alignment", "weights": { "alignment": 1.0 } },
+        { "label": "alignment", "value": "alignment", "weights": { "alignment": 1.0 } },
+        { "label": "scalabe oversight", "value": "alignment", "weights": { "alignment": 1.0 } },
+        { "label": "perparedness", "value": "alignment", "weights": { "alignment": 1.0 } },
+        { "label": "strategy", "value": "alignment", "weights": { "alignment": 1.0 } },
+        { "label": "societal resilience", "value": "alignment", "weights": { "alignment": 1.0 } },
+        { "label": "societal impacts", "value": "alignment", "weights": { "alignment": 1.0 } },
+        { "label": "red teaming", "value": "alignment", "weights": { "alignment": 1.0 } },
+        { "label": "robustness", "value": "alignment", "weights": { "alignment": 1.0 } },
+        { "label": "control", "value": "alignment", "weights": { "alignment": 1.0 } },
+        { "label": "RLHF", "value": "alignment", "weights": { "alignment": 1.0 } },
+        { "label": "autonomous systems", "value": "alignment", "weights": { "alignment": 1.0 } },
+        { "label": "agents", "value": "alignment", "weights": { "alignment": 1.0 } },
+        { "label": "other", "value": "work_unsure", "weights": {} },
+        { "label": "not sure yet", "value": "work_unsure", "weights": {} }
       ]
     },
     {
@@ -83,31 +94,36 @@
       "type": "multi_select",
       "required": true,
       "options": [
-        { "label": "Direct technical work", "value": "toc_direct", "weights": { "toc_direct": 1.0 } },
-        { "label": "Policy", "value": "toc_policy", "weights": { "toc_policy": 1.0 } },
-        { "label": "Advocacy", "value": "toc_advocacy", "weights": { "toc_advocacy": 1.0 } },
-        { "label": "Movement building", "value": "toc_movement", "weights": { "toc_movement": 1.0 } },
-        { "label": "Earning to give", "value": "toc_earning", "weights": { "toc_earning": 1.0 } },
-        { "label": "Research", "value": "toc_research", "weights": { "toc_research": 1.0 } },
-        { "label": "Community building", "value": "toc_community", "weights": { "toc_community": 1.0 } },
-        { "label": "Unsure", "value": "toc_unsure", "weights": {} }
+        { "label": "technical work", "value": "toc_direct", "weights": { "toc_direct": 1.0 } },
+        { "label": "policy", "value": "toc_policy", "weights": { "toc_policy": 1.0 } },
+        { "label": "advocacy", "value": "toc_advocacy", "weights": { "toc_advocacy": 1.0 } },
+        { "label": "earning to give", "value": "toc_earning", "weights": { "toc_earning": 1.0 } },
+        { "label": "research", "value": "toc_research", "weights": { "toc_research": 1.0 } },
+        { "label": "field-building", "value": "toc_community", "weights": { "toc_community": 1.0 } },
+        { "label": "research ideation", "value": "toc_community", "weights": { "toc_community": 1.0 } },
+        { "label": "advise or consult", "value": "work_advise", "weights": { "work_advise": 1.0 } },
+        { "label": "finding talent", "value": "work_volunteer", "weights": { "work_volunteer": 1.0 } },
+        { "label": "other", "value": "toc_unsure", "weights": {} },
+        { "label": "not sure yet", "value": "toc_unsure", "weights": {} }
       ]
     },
     {
       "id": "q_work_mode",
       "section": "Your Idea",
-      "text": "What do you want to work on?",
+      "text": "What's your quest?",
       "hint": "Select all that apply.",
       "type": "multi_select",
       "required": true,
       "options": [
-        { "label": "Start a new org", "value": "work_start_org", "weights": { "work_start_org": 1.0 } },
-        { "label": "Contribute to an existing org", "value": "work_contribute", "weights": { "work_contribute": 1.0 } },
-        { "label": "Independent research", "value": "work_independent", "weights": { "work_independent": 1.0 } },
-        { "label": "Advise or consult", "value": "work_advise", "weights": { "work_advise": 1.0 } },
-        { "label": "Volunteer", "value": "work_volunteer", "weights": { "work_volunteer": 1.0 } },
-        { "label": "Find a co-founder", "value": "work_co_founder", "weights": { "work_co_founder": 1.0 } },
-        { "label": "Unsure", "value": "work_unsure", "weights": {} }
+        { "label": "starting a company/start-up", "value": "work_start_org", "weights": { "work_start_org": 1.0 } },
+        { "label": "starting a non-profit", "value": "work_start_org", "weights": { "work_start_org": 1.0 } },
+        { "label": "joining an existing org", "value": "work_contribute", "weights": { "work_contribute": 1.0 } },
+        { "label": "independent research", "value": "work_independent", "weights": { "work_independent": 1.0 } },
+        { "label": "volunteering", "value": "work_volunteer", "weights": { "work_volunteer": 1.0 } },
+        { "label": "running a programme", "value": "work_volunteer", "weights": { "work_volunteer": 1.0 } },
+    
+        { "label": "other", "value": "work_unsure", "weights": {} },
+        { "label": "not sure yet", "value": "work_unsure", "weights": {} }
       ]
     },
     {
@@ -118,16 +134,17 @@
       "type": "multi_select",
       "required": true,
       "options": [
-        { "label": "Reduce existential risk", "value": "imp_xrisk", "weights": { "imp_xrisk": 1.0 } },
-        { "label": "Accelerate AI safety research", "value": "imp_research", "weights": { "imp_research": 1.0 } },
-        { "label": "Influence policy & regulation", "value": "imp_policy", "weights": { "imp_policy": 1.0 } },
-        { "label": "Build the EA/AIS community", "value": "imp_community", "weights": { "imp_community": 1.0 } },
-        { "label": "Develop talent & mentorship pipelines", "value": "imp_talent", "weights": { "imp_talent": 1.0 } },
-        { "label": "Fund high-impact work", "value": "imp_funding", "weights": { "imp_funding": 1.0 } },
-        { "label": "Change mainstream narratives", "value": "imp_narratives", "weights": { "imp_narratives": 1.0 } },
-        { "label": "Build tools or products", "value": "imp_tools", "weights": { "imp_tools": 1.0 } },
-        { "label": "Improve institutional decision-making", "value": "imp_institutions", "weights": { "imp_institutions": 1.0 } },
-        { "label": "Near-term suffering reduction", "value": "imp_near_term", "weights": { "imp_near_term": 1.0 } }
+        { "label": "reducing x-risk", "value": "imp_xrisk", "weights": { "imp_xrisk": 1.0 } },
+        { "label": "accelerating AIS research", "value": "imp_research", "weights": { "imp_research": 1.0 } },
+        { "label": "influencing policy and regulation", "value": "imp_policy", "weights": { "imp_policy": 1.0 } },
+        { "label": "building stronger community", "value": "imp_community", "weights": { "imp_community": 1.0 } },
+        { "label": "developing talent pipelines", "value": "imp_talent", "weights": { "imp_talent": 1.0 } },
+        { "label": "helping fund high-impact work", "value": "imp_funding", "weights": { "imp_funding": 1.0 } },
+        { "label": "influencing mainstream narratives", "value": "imp_narratives", "weights": { "imp_narratives": 1.0 } },
+        { "label": "building tools or products", "value": "imp_tools", "weights": { "imp_tools": 1.0 } },
+        { "label": "improving preparedness", "value": "imp_institutions", "weights": { "imp_institutions": 1.0 } },
+        { "label": "other", "value": "imp_other", "weights": {} },
+        { "label": "not sure yet", "value": "imp_unsure", "weights": {} }
       ]
     },
     {
@@ -138,14 +155,16 @@
       "type": "multi_select",
       "required": true,
       "options": [
-        { "label": "Finding collaborators", "value": "need_collaborators", "weights": { "need_collaborators": 1.0 } },
-        { "label": "Funding", "value": "need_funding", "weights": { "need_funding": 1.0 } },
-        { "label": "Time", "value": "need_time", "weights": { "need_time": 1.0 } },
-        { "label": "Skill gaps", "value": "need_skills", "weights": { "need_skills": 1.0 } },
-        { "label": "Direction & clarity", "value": "need_direction", "weights": { "need_direction": 1.0 } },
-        { "label": "Feedback & validation", "value": "need_feedback", "weights": { "need_feedback": 1.0 } },
-        { "label": "Network access", "value": "need_network", "weights": { "need_network": 1.0 } },
-        { "label": "Motivation", "value": "need_motivation", "weights": { "need_motivation": 1.0 } }
+        { "label": "finding collaborators", "value": "need_collaborators", "weights": { "need_collaborators": 1.0 } },
+        { "label": "funding", "value": "need_funding", "weights": { "need_funding": 1.0 } },
+        { "label": "time", "value": "need_time", "weights": { "need_time": 1.0 } },
+        { "label": "skill gaps", "value": "need_skills", "weights": { "need_skills": 1.0 } },
+        { "label": "direction & clarity", "value": "need_direction", "weights": { "need_direction": 1.0 } },
+        { "label": "feedback & validation", "value": "need_feedback", "weights": { "need_feedback": 1.0 } },
+        { "label": "network access", "value": "need_network", "weights": { "need_network": 1.0 } },
+        { "label": "motivation", "value": "need_motivation", "weights": { "need_motivation": 1.0 } },
+        { "label": "other", "value": "need_other", "weights": {} },
+        { "label": "not sure", "value": "need_unsure", "weights": {} }
       ]
     },
     {
@@ -156,9 +175,9 @@
       "required": true,
       "options": [
         { "label": "Just got here!", "value": "ea_new", "weights": {} },
-        { "label": "< 6 months", "value": "ea_lt6mo", "weights": {} },
-        { "label": "6 months – 2 years", "value": "ea_6mo_2yr", "weights": {} },
-        { "label": "2 – 5 years", "value": "ea_2_5yr", "weights": {} },
+        { "label": "<6 months", "value": "ea_lt6mo", "weights": {} },
+        { "label": "6 months to 2 years", "value": "ea_6mo_2yr", "weights": {} },
+        { "label": "2 to 5 years", "value": "ea_2_5yr", "weights": {} },
         { "label": "5+ years", "value": "ea_5plus", "weights": {} }
       ]
     },
@@ -169,11 +188,11 @@
       "type": "dropdown",
       "required": true,
       "options": [
-        { "label": "Curious", "value": "ais_curious", "weights": { "ais_engagement": 0.2 } },
-        { "label": "Actively learning", "value": "ais_learning", "weights": { "ais_engagement": 0.4 } },
-        { "label": "Somewhat involved", "value": "ais_somewhat", "weights": { "ais_engagement": 0.6 } },
-        { "label": "Deeply involved", "value": "ais_deep", "weights": { "ais_engagement": 0.8 } },
-        { "label": "It's my full-time focus", "value": "ais_fulltime", "weights": { "ais_engagement": 1.0 } }
+        { "label": "AIS-curious", "value": "ais_curious", "weights": { "ais_engagement": 0.2 } },
+        { "label": "actively learning", "value": "ais_learning", "weights": { "ais_engagement": 0.4 } },
+        { "label": "somewhat involved", "value": "ais_somewhat", "weights": { "ais_engagement": 0.6 } },
+        { "label": "quite involved", "value": "ais_deep", "weights": { "ais_engagement": 0.8 } },
+        { "label": "committed full-time", "value": "ais_fulltime", "weights": { "ais_engagement": 1.0 } }
       ]
     },
     {
@@ -183,13 +202,12 @@
       "type": "dropdown",
       "required": true,
       "options": [
-        { "label": "Student", "value": "student", "weights": {} },
-        { "label": "Early career (0–3 years)", "value": "early_career", "weights": {} },
-        { "label": "Mid-career (3–10 years)", "value": "mid_career", "weights": {} },
-        { "label": "Senior", "value": "senior", "weights": {} },
-        { "label": "Funder", "value": "funder", "weights": {} },
-        { "label": "Career transitioning", "value": "transitioning", "weights": {} },
-        { "label": "Retired", "value": "retired", "weights": {} }
+        { "label": "student", "value": "student", "weights": {} },
+        { "label": "early career (0-3 years)", "value": "early_career", "weights": {} },
+        { "label": "mid-career (3-10 years)", "value": "mid_career", "weights": {} },
+        { "label": "senior", "value": "senior", "weights": {} },
+        { "label": "career transitioning", "value": "transitioning", "weights": {} },
+        { "label": "retired", "value": "retired", "weights": {} }
       ]
     },
     {
@@ -200,19 +218,19 @@
       "type": "multi_select",
       "required": false,
       "options": [
-        { "label": "Computer science", "value": "cs", "weights": {} },
+        { "label": "Computer Science", "value": "cs", "weights": {} },
         { "label": "Mathematics", "value": "math", "weights": {} },
         { "label": "Physics", "value": "physics", "weights": {} },
         { "label": "Biology", "value": "biology", "weights": {} },
         { "label": "Philosophy", "value": "philosophy", "weights": {} },
         { "label": "Economics", "value": "economics", "weights": {} },
         { "label": "Law", "value": "law", "weights": {} },
-        { "label": "Political science", "value": "poli_sci", "weights": {} },
+        { "label": "Political Science", "value": "poli_sci", "weights": {} },
         { "label": "Psychology", "value": "psychology", "weights": {} },
         { "label": "Engineering", "value": "engineering", "weights": {} },
         { "label": "Cognitive sciences", "value": "cog_sci", "weights": {} },
         { "label": "N/A", "value": "no_academic", "weights": {} },
-        { "label": "Other", "value": "academic_other", "weights": {} }
+        { "label": "other", "value": "academic_other", "weights": {} }
       ]
     },
     {
@@ -223,18 +241,19 @@
       "type": "multi_select",
       "required": false,
       "options": [
-        { "label": "Tech", "value": "prof_tech", "weights": {} },
-        { "label": "Research", "value": "prof_research", "weights": {} },
-        { "label": "Policy", "value": "prof_policy", "weights": {} },
-        { "label": "Finance", "value": "prof_finance", "weights": {} },
-        { "label": "Medicine", "value": "prof_medicine", "weights": {} },
-        { "label": "Law", "value": "prof_law", "weights": {} },
-        { "label": "Academia", "value": "prof_academia", "weights": {} },
-        { "label": "Operations", "value": "prof_ops", "weights": {} },
-        { "label": "NGO / non-profit", "value": "prof_ngo", "weights": {} },
-        { "label": "Start-ups", "value": "prof_startups", "weights": {} },
-        { "label": "Military", "value": "prof_military", "weights": {} },
-        { "label": "Other", "value": "prof_other", "weights": {} }
+        { "label": "tech", "value": "prof_tech", "weights": {} },
+        { "label": "research", "value": "prof_research", "weights": {} },
+        { "label": "policy", "value": "prof_policy", "weights": {} },
+        { "label": "finance", "value": "prof_finance", "weights": {} },
+        { "label": "medicine", "value": "prof_medicine", "weights": {} },
+        { "label": "law", "value": "prof_law", "weights": {} },
+        { "label": "academia", "value": "prof_academia", "weights": {} },
+        { "label": "ops", "value": "prof_ops", "weights": {} },
+        { "label": "NGO/non-profit", "value": "prof_ngo", "weights": {} },
+        { "label": "start-up", "value": "prof_startups", "weights": {} },
+        { "label": "military", "value": "prof_military", "weights": {} },
+        { "label": "N/A", "value": "work_unsure", "weights": {} },
+        { "label": "other", "value": "prof_other", "weights": {} }
       ]
     },
     {
@@ -245,71 +264,75 @@
       "type": "multi_select",
       "required": true,
       "options": [
-        { "label": "ML / AI engineering", "value": "skill_ml", "weights": { "skill_ml": 1.0 } },
-        { "label": "Interpretability research", "value": "skill_interp", "weights": { "skill_interp": 1.0 } },
-        { "label": "Writing & comms", "value": "skill_writing", "weights": { "skill_writing": 1.0 } },
-        { "label": "Policy & advocacy", "value": "skill_policy", "weights": { "skill_policy": 1.0 } },
-        { "label": "Fundraising", "value": "skill_fundraising", "weights": { "skill_fundraising": 1.0 } },
-        { "label": "Operations", "value": "skill_ops", "weights": { "skill_ops": 1.0 } },
-        { "label": "Mentoring", "value": "skill_mentoring", "weights": { "skill_mentoring": 1.0 } },
-        { "label": "Community building", "value": "skill_community", "weights": { "skill_community": 1.0 } },
-        { "label": "Philosophy", "value": "skill_philosophy", "weights": { "skill_philosophy": 1.0 } },
-        { "label": "Economics", "value": "skill_economics", "weights": { "skill_economics": 1.0 } },
-        { "label": "Legal", "value": "skill_legal", "weights": { "skill_legal": 1.0 } },
-        { "label": "Software dev", "value": "skill_software", "weights": { "skill_software": 1.0 } },
-        { "label": "Data analysis", "value": "skill_data", "weights": { "skill_data": 1.0 } },
-        { "label": "Design", "value": "skill_design", "weights": { "skill_design": 1.0 } },
-        { "label": "Other", "value": "skill_other", "weights": {} }
+        { "label": "ML/AI engineering", "value": "skill_ml", "weights": { "skill_ml": 1.0 } },
+        { "label": "SWE", "value": "skill_interp", "weights": { "skill_interp": 1.0 } },
+        { "label": "academic writing", "value": "skill_writing", "weights": { "skill_writing": 1.0 } },
+        { "label": "communications", "value": "work_unsure", "weights": {} },
+        { "label": "advocacy", "value": "skill_policy", "weights": { "skill_policy": 1.0 } },
+        { "label": "policy", "value": "work_unsure", "weights": {} },
+        { "label": "grant-writing", "value": "skill_fundraising", "weights": { "skill_fundraising": 1.0 } },
+        { "label": "ops", "value": "skill_ops", "weights": { "skill_ops": 1.0 } },
+        { "label": "mentoring", "value": "skill_mentoring", "weights": { "skill_mentoring": 1.0 } },
+        { "label": "fieldbuilding", "value": "skill_community", "weights": { "skill_community": 1.0 } },
+        { "label": "events", "value": "skill_philosophy", "weights": { "skill_philosophy": 1.0 } },
+        { "label": "research", "value": "skill_economics", "weights": { "skill_economics": 1.0 } },
+        { "label": "legal", "value": "skill_legal", "weights": { "skill_legal": 1.0 } },
+        { "label": "web dev", "value": "skill_software", "weights": { "skill_software": 1.0 } },
+        { "label": "data analysis", "value": "skill_data", "weights": { "skill_data": 1.0 } },
+        { "label": "design", "value": "skill_design", "weights": { "skill_design": 1.0 } },
+        { "label": "stats", "value": "skill_design", "weights": { "skill_design": 1.0 } },
+        { "label": "cybersec", "value": "skill_design", "weights": { "skill_design": 1.0 } },
+        { "label": "other", "value": "skill_other", "weights": {} }
       ]
     },
     {
       "id": "q_ws_focus",
       "section": "Your Background & Vibe",
-      "text": "How do you prefer to work? (focus vs collaboration)",
+      "text": "How do you prefer to work?",
       "type": "slider",
       "required": false,
-      "sliderMin": "Deep focus",
-      "sliderMax": "Collaborative",
+      "sliderMin": "focus on my own",
+      "sliderMax": "collaborate with others",
       "sliderTag": "style_collaborative"
     },
     {
       "id": "q_ws_pace",
       "section": "Your Background & Vibe",
-      "text": "How do you prefer to work? (pace vs rigour)",
+      "text": "How do you prefer to progress?",
       "type": "slider",
       "required": false,
-      "sliderMin": "Fast-moving",
-      "sliderMax": "Slow & rigorous",
+      "sliderMin": "fast and flexible",
+      "sliderMax": "slow and rigorous",
       "sliderTag": "style_rigorous"
     },
     {
       "id": "q_ws_thinking",
       "section": "Your Background & Vibe",
-      "text": "How do you prefer to work? (thinking style)",
+      "text": "What's your thinking style?",
       "type": "slider",
       "required": false,
-      "sliderMin": "Creative thinker",
-      "sliderMax": "Systems thinker",
+      "sliderMin": "creative",
+      "sliderMax": "systems-oriented",
       "sliderTag": "style_systems"
     },
     {
       "id": "q_ws_breadth",
       "section": "Your Background & Vibe",
-      "text": "How do you prefer to work? (breadth vs depth)",
+      "text": "What kind of problem-solver are you?",
       "type": "slider",
       "required": false,
-      "sliderMin": "Generalist",
-      "sliderMax": "Specialist",
+      "sliderMin": "generalist",
+      "sliderMax": "specialist",
       "sliderTag": "style_specialist"
     },
     {
       "id": "q_ws_social",
       "section": "Your Background & Vibe",
-      "text": "How do you prefer to work? (social energy)",
+      "text": "What's your social style?",
       "type": "slider",
       "required": false,
-      "sliderMin": "Introverted",
-      "sliderMax": "Extroverted",
+      "sliderMin": "introverted",
+      "sliderMax": "extroverted",
       "sliderTag": "style_extroverted"
     },
     {
@@ -319,10 +342,10 @@
       "type": "dropdown",
       "required": true,
       "options": [
-        { "label": "< 2 hrs", "value": "time_lt2", "weights": {} },
-        { "label": "2–5 hrs", "value": "time_2_5", "weights": {} },
-        { "label": "5–10 hrs", "value": "time_5_10", "weights": {} },
-        { "label": "10–20 hrs", "value": "time_10_20", "weights": {} },
+        { "label": "<2 hours", "value": "time_lt2", "weights": {} },
+        { "label": "2 to 5 hours", "value": "time_2_5", "weights": {} },
+        { "label": "5 to 10 hours", "value": "time_5_10", "weights": {} },
+        { "label": "10 to 20 hours", "value": "time_10_20", "weights": {} },
         { "label": "Can commit full-time to the right project!", "value": "time_fulltime", "weights": {} }
       ]
     },
@@ -332,8 +355,8 @@
       "text": "Are you here to launch or to plug in?",
       "type": "slider",
       "required": false,
-      "sliderMin": "Plug in to existing work",
-      "sliderMax": "Launch something new",
+      "sliderMin": "plug in to existing work",
+      "sliderMax": "launch something new",
       "sliderTag": "style_launch"
     }
   ]
