@@ -20,6 +20,7 @@ const CHIPS = [
 
 const BG = {
   background: "radial-gradient(ellipse 120% 80% at 50% 40%, #2a2a2a 0%, #1a1a1a 40%, #0f0f0f 100%)",
+  backgroundAttachment: "fixed",
 };
 
 const HOW_IT_WORKS = [
