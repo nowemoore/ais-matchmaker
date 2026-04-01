@@ -546,7 +546,7 @@ function SliderInput({ question, value, onChange }: {
       <input
         type="range" min={0} max={100} value={pct}
         onChange={(e) => onChange(Number(e.target.value) / 100)}
-        className="w-full cursor-pointer accent-[#81afa5]"
+        className="w-full cursor-pointer"
       />
       <div className="flex justify-between text-sm text-white/40">
         <span>{question.sliderMin}</span>
