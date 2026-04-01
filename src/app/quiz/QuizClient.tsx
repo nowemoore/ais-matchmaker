@@ -58,9 +58,9 @@ export default function QuizClient({ userId, onBack }: Props) {
   }
 
   function handleNext() {
+    // Dismissing a transition — index was already advanced when transition was triggered
     if (transition) {
       setTransition(null);
-      setCurrentIndex((i) => i + 1);
       return;
     }
     if (!canProceed()) { setAttempted(true); return; }
@@ -70,6 +70,8 @@ export default function QuizClient({ userId, onBack }: Props) {
     const currentSection = questions[currentIndex].section;
     const nextSection = questions[nextIndex].section;
     if (nextSection !== currentSection && SECTION_TRANSITIONS[nextSection]) {
+      // Advance index first, then show transition — so dismissing doesn't skip a question
+      setCurrentIndex(nextIndex);
       setTransition(nextSection);
     } else {
       setCurrentIndex(nextIndex);
@@ -77,7 +79,12 @@ export default function QuizClient({ userId, onBack }: Props) {
   }
 
   function handleBack() {
-    if (transition) { setTransition(null); return; }
+    if (transition) {
+      // Mid-quiz transition: go back to the question before the new section
+      setTransition(null);
+      setCurrentIndex((i) => Math.max(0, i - 1));
+      return;
+    }
     setAttempted(false);
     if (currentIndex > 0) {
       setCurrentIndex((i) => i - 1);
@@ -145,7 +152,7 @@ export default function QuizClient({ userId, onBack }: Props) {
         {/* Card */}
         <div
           className="rounded-2xl border border-white/15 p-8 shadow-xl flex flex-col overflow-visible"
-          style={{ minHeight: "22rem", background: "rgba(255,255,255,0.06)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)" }}
+          style={{ height: "22rem", background: "rgba(255,255,255,0.06)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)" }}
         >
           <AnimatePresence mode="wait">
             {transition ? (
@@ -172,7 +179,7 @@ export default function QuizClient({ userId, onBack }: Props) {
                 {question.hint && <p className="text-sm text-white/50">{question.hint}</p>}
               </div>
 
-              <div className="flex-1 flex items-center overflow-visible">
+              <div className="flex-1 overflow-y-auto no-scrollbar">
                 <div className="w-full">
                   {question.type === "dropdown" && (
                     <DropdownInput
