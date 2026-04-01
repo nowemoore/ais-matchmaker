@@ -90,7 +90,7 @@ export default function LandingClient({ userId }: Props) {
                 <RotatingQuestion />
 
                 {/* Title */}
-                <div className="flex justify-center my-8">
+                <div className="flex justify-center my-14">
                   <div className="relative">
                     <h1
                       className="text-6xl sm:text-7xl tracking-tight leading-none"
@@ -100,7 +100,7 @@ export default function LandingClient({ userId }: Props) {
                       <span className="text-white">AIS</span>
                       <span style={{ color: "#AFDED4" }}>BOOK</span>
                     </h1>
-                    <span className="absolute top-0 left-full ml-2 inline-flex items-center rounded-full border border-[#5c9d8b]/50 bg-[#354b45]/10 px-3 py-0.5 text-xl font-medium text-[#5c9d8b] backdrop-blur-sm tracking-normal">
+                    <span className="absolute bottom-0 left-full ml-2 inline-flex items-center rounded-full border border-[#5c9d8b]/50 bg-[#354b45]/10 px-3 py-0.5 text-xl font-medium text-[#5c9d8b] backdrop-blur-sm tracking-normal">
                       v1.0
                     </span>
                   </div>
@@ -186,11 +186,12 @@ export default function LandingClient({ userId }: Props) {
                   </button>
                 </div>
 
-                <p className="text-center text-xs text-white/25">
-                  &#183; built with Claude for the AIS community &#183;
-                </p>
               </div>
             </section>
+
+            <p className="py-6 text-center text-xs text-white/25">
+              &#183; built with Claude for the AIS community &#183;
+            </p>
           </motion.div>
         ) : (
           <motion.div
