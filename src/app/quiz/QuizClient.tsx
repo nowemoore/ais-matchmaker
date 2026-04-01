@@ -550,7 +550,6 @@ function SliderInput({ question, value, onChange }: {
       />
       <div className="flex justify-between text-sm text-white/40">
         <span>{question.sliderMin}</span>
-        <span className="text-[#81afa5]">{pct}%</span>
         <span>{question.sliderMax}</span>
       </div>
     </div>
