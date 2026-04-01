@@ -90,18 +90,20 @@ export default function LandingClient({ userId }: Props) {
                 <RotatingQuestion />
 
                 {/* Title */}
-                <div className="flex items-end justify-center gap-3">
-                  <h1
-                    className="text-6xl sm:text-7xl tracking-tight leading-none my-8"
-                    style={{ fontFamily: "'Boldonse', system-ui" }}
-                  >
-                    <span style={{ color: "#AFDED4" }}>F</span>
-                    <span className="text-white">AIS</span>
-                    <span style={{ color: "#AFDED4" }}>BOOK</span>
-                  </h1>
-                  <span className="inline-flex items-center rounded-full border border-[#5c9d8b]/50 bg-[#354b45]/10 px-3 py-0.5 text-xl font-medium text-[#5c9d8b] backdrop-blur-sm tracking-normal mb-1.5">
-                    v1.0
-                  </span>
+                <div className="flex justify-center my-8">
+                  <div className="relative">
+                    <h1
+                      className="text-6xl sm:text-7xl tracking-tight leading-none"
+                      style={{ fontFamily: "'Boldonse', system-ui" }}
+                    >
+                      <span style={{ color: "#AFDED4" }}>F</span>
+                      <span className="text-white">AIS</span>
+                      <span style={{ color: "#AFDED4" }}>BOOK</span>
+                    </h1>
+                    <span className="absolute top-0 left-full ml-2 inline-flex items-center rounded-full border border-[#5c9d8b]/50 bg-[#354b45]/10 px-3 py-0.5 text-xl font-medium text-[#5c9d8b] backdrop-blur-sm tracking-normal">
+                      v1.0
+                    </span>
+                  </div>
                 </div>
 
                 {/* Tagline */}
