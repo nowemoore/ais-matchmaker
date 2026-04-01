@@ -1065,6 +1065,15 @@
       "sliderMin": "plug in to existing work",
       "sliderMax": "launch something new",
       "sliderTag": "style_launch"
+    },
+    {
+      "id": "q_pitch",
+      "section": "Your Time & Commitment",
+      "text": "Pitch yourself to your potential match in 3 sentences.",
+      "hint": "We'll use this to introduce you to people we think you should chat with, so make sure they can easily identify what you're looking for.",
+      "type": "free_text",
+      "required": false,
+      "placeholder": "e.g. I'm a policy researcher focused on AI governance who's looking for a technical co-founder to help build a monitoring tool for frontier labs. I have 5 years of experience in DC and strong connections to regulators. I'm looking for someone who can turn research into prototypes fast."
     }
   ]
 }
