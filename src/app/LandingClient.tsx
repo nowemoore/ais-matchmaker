@@ -55,7 +55,7 @@ export default function LandingClient({ userId }: Props) {
 
   return (
     <main
-      className={`relative text-white ${showQuiz ? "h-screen overflow-hidden" : "overflow-y-auto"}`}
+      className={`relative text-white no-scrollbar ${showQuiz ? "h-screen overflow-hidden" : "overflow-y-auto"}`}
       style={BG}
     >
       <AnimatePresence mode="wait">
