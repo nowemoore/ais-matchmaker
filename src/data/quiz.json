@@ -4,32 +4,8 @@
       "id": "q_location",
       "section": "About You",
       "text": "Where are you based?",
-      "type": "dropdown",
-      "required": false,
-      "options": [
-        { "label": "United States", "value": "usa", "weights": {} },
-        { "label": "United Kingdom", "value": "uk", "weights": {} },
-        { "label": "Canada", "value": "canada", "weights": {} },
-        { "label": "Australia", "value": "australia", "weights": {} },
-        { "label": "New Zealand", "value": "nz", "weights": {} },
-        { "label": "Germany", "value": "germany", "weights": {} },
-        { "label": "Netherlands", "value": "netherlands", "weights": {} },
-        { "label": "Sweden", "value": "sweden", "weights": {} },
-        { "label": "Switzerland", "value": "switzerland", "weights": {} },
-        { "label": "France", "value": "france", "weights": {} },
-        { "label": "Denmark", "value": "denmark", "weights": {} },
-        { "label": "Norway", "value": "norway", "weights": {} },
-        { "label": "Other Europe", "value": "europe_other", "weights": {} },
-        { "label": "India", "value": "india", "weights": {} },
-        { "label": "Singapore", "value": "singapore", "weights": {} },
-        { "label": "Japan", "value": "japan", "weights": {} },
-        { "label": "China", "value": "china", "weights": {} },
-        { "label": "Other Asia", "value": "asia_other", "weights": {} },
-        { "label": "Latin America", "value": "latam", "weights": {} },
-        { "label": "Middle East", "value": "middle_east", "weights": {} },
-        { "label": "Africa", "value": "africa", "weights": {} },
-        { "label": "Other", "value": "other", "weights": {} }
-      ]
+      "type": "location",
+      "required": false
     },
     {
       "id": "q_connect_mode",
@@ -37,8 +13,8 @@
       "text": "Do you prefer connecting online or in-person?",
       "type": "slider",
       "required": false,
-      "sliderMin": "Online only",
-      "sliderMax": "In-person only",
+      "sliderMin": "online only",
+      "sliderMax": "in-person only",
       "sliderTag": "style_in_person"
     },
     {

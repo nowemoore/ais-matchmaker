@@ -47,7 +47,7 @@ export interface MatchResult {
 
 // ── Quiz config types ─────────────────────────────────────────────────────────
 
-export type QuestionType = "dropdown" | "multi_select" | "slider" | "free_text";
+export type QuestionType = "dropdown" | "multi_select" | "slider" | "free_text" | "location";
 
 export interface QuizOption {
   label: string;
