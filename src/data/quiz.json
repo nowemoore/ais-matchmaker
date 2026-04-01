@@ -13,8 +13,8 @@
       "text": "Do you prefer connecting online or in-person?",
       "type": "slider",
       "required": false,
-      "sliderMin": "Online only",
-      "sliderMax": "In-person only",
+      "sliderMin": "online only",
+      "sliderMax": "in-person only",
       "sliderTag": "style_in_person"
     },
     {

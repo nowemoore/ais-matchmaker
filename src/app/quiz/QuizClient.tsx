@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleChevronLeft, faCircleChevronRight, faCircleCheck } from "@fortawesome/free-solid-svg-icons";
+import { AnimatePresence, motion } from "framer-motion";
 import quizConfig from "@/data/quiz.json";
 import { buildTagVector } from "@/lib/quiz";
 import { createClient } from "@/lib/supabase/client";
@@ -13,9 +14,18 @@ import type { QuizConfig, QuizQuestion, AnswerValue } from "@/types";
 const config = quizConfig as QuizConfig;
 const questions = config.questions;
 
-interface Props { userId: string; }
+// Transition slides shown when entering a new section
+const SECTION_TRANSITIONS: Record<string, string> = {
+  "About You":              "First, let's go through the basics.",
+  "Your Priorities":        "Now, what drives you?",
+  "Your Idea":              "Tell us about what you're working on.",
+  "Your Background & Vibe": "A little about who you are.",
+  "Your Time & Commitment": "Almost there — just a couple more.",
+};
 
-export default function QuizClient({ userId }: Props) {
+interface Props { userId: string; onBack?: () => void; }
+
+export default function QuizClient({ userId, onBack }: Props) {
   const router = useRouter();
   const supabase = createClient();
 
@@ -23,16 +33,23 @@ export default function QuizClient({ userId }: Props) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [attempted, setAttempted] = useState(false);
+  const [transition, setTransition] = useState<string | null>("About You");
 
   const question = questions[currentIndex];
   const total = questions.length;
   const progress = ((currentIndex + 1) / total) * 100;
 
   function canProceed(): boolean {
-    if (!question.required) return true;
     const a = answers[question.id];
+    // Age is always validated if a value has been entered
+    if (question.id === "q_age" && a !== undefined && (a as string).length > 0) {
+      const num = parseInt(a as string);
+      if (isNaN(num) || num < 18 || num > 100) return false;
+    }
+    if (!question.required) return true;
     if (question.type === "location") {
-      return typeof answers[question.id] === "string" && (answers[question.id] as string).length > 0;
+      return typeof a === "string" && (a as string).length > 0;
     }
     if (a === undefined) return false;
     if (question.type === "multi_select") return Array.isArray(a) && a.length > 0;
@@ -41,12 +58,46 @@ export default function QuizClient({ userId }: Props) {
   }
 
   function handleNext() {
-    if (currentIndex < questions.length - 1) setCurrentIndex((i) => i + 1);
+    if (transition) {
+      setTransition(null);
+      setCurrentIndex((i) => i + 1);
+      return;
+    }
+    if (!canProceed()) { setAttempted(true); return; }
+    setAttempted(false);
+    const nextIndex = currentIndex + 1;
+    if (nextIndex >= questions.length) return;
+    const currentSection = questions[currentIndex].section;
+    const nextSection = questions[nextIndex].section;
+    if (nextSection !== currentSection && SECTION_TRANSITIONS[nextSection]) {
+      setTransition(nextSection);
+    } else {
+      setCurrentIndex(nextIndex);
+    }
   }
 
   function handleBack() {
-    if (currentIndex > 0) setCurrentIndex((i) => i - 1);
+    if (transition) { setTransition(null); return; }
+    setAttempted(false);
+    if (currentIndex > 0) {
+      setCurrentIndex((i) => i - 1);
+    } else if (onBack) {
+      onBack();
+    }
   }
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      const tag = (e.target as HTMLElement).tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA") return;
+      if (e.key === "ArrowRight" || e.key === "Enter") handleNext();
+      if (e.key === "ArrowLeft") handleBack();
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transition, currentIndex, answers]);
 
   async function handleSubmit() {
     setSaving(true);
@@ -70,20 +121,9 @@ export default function QuizClient({ userId }: Props) {
     <main
       className="relative min-h-screen flex flex-col items-center justify-center px-4 py-16 text-white overflow-hidden"
       style={{
-        background: `
-          radial-gradient(ellipse 90% 80% at 85% 10%, rgba(255,255,255,0.88) 0%, rgba(140,232,212,0.72) 18%, rgba(80,196,210,0.4) 38%, rgba(50,110,200,0.15) 58%, transparent 75%),
-          radial-gradient(ellipse 60% 50% at 100% 60%, rgba(60,160,180,0.2) 0%, transparent 60%),
-          #0b1120
-        `,
+        background: "radial-gradient(ellipse 120% 80% at 50% 40%, #2a2a2a 0%, #1a1a1a 40%, #0f0f0f 100%)",
       }}
     >
-      <Link
-        href="/"
-        className="absolute top-6 left-6 inline-flex items-center gap-2 text-base text-white/50 hover:text-white/90 transition-colors"
-      >
-        <FontAwesomeIcon icon={faCircleChevronLeft} className="text-sm" />
-        Home
-      </Link>
 
       <div className="w-full max-w-xl space-y-6">
 
@@ -106,63 +146,86 @@ export default function QuizClient({ userId }: Props) {
           className="rounded-2xl border border-white/15 p-8 shadow-xl flex flex-col overflow-visible"
           style={{ height: "22rem", background: "rgba(255,255,255,0.06)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)" }}
         >
-          <div className="space-y-1.5 mb-6 text-center">
-            <h2 className="text-xl font-semibold leading-snug text-white">{question.text}</h2>
-            {question.hint && <p className="text-sm text-white/50">{question.hint}</p>}
-          </div>
+          <AnimatePresence mode="wait">
+            {transition ? (
+              <motion.div
+                key="transition"
+                className="flex-1 flex"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.4 }}
+              >
+                <TransitionSlide text={SECTION_TRANSITIONS[transition]} />
+              </motion.div>
+            ) : (
+              <motion.div
+                key={question.id}
+                className="flex-1 flex flex-col"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
+              >
+              <div className="space-y-1.5 mb-6 text-center">
+                <h2 className="text-xl font-semibold leading-snug text-white">{question.text}</h2>
+                {question.hint && <p className="text-sm text-white/50">{question.hint}</p>}
+              </div>
 
-          <div className="flex-1 flex items-center overflow-visible">
-            <div className="w-full">
-              {question.type === "dropdown" && (
-                <DropdownInput
-                  question={question}
-                  value={answers[question.id] as string | undefined}
-                  onChange={(v) => setAnswers((p) => ({ ...p, [question.id]: v }))}
-                />
-              )}
-              {question.type === "location" && (
-                <LocationInput
-                  question={question}
-                  country={answers[question.id] as string | undefined}
-                  city={answers[`${question.id}_city`] as string | undefined}
-                  onCountry={(v) => setAnswers((p) => ({ ...p, [question.id]: v }))}
-                  onCity={(v) => setAnswers((p) => ({ ...p, [`${question.id}_city`]: v }))}
-                />
-              )}
-              {question.type === "multi_select" && (
-                <MultiSelectInput
-                  question={question}
-                  selected={(answers[question.id] as string[] | undefined) ?? []}
-                  onToggle={(v) =>
-                    setAnswers((p) => {
-                      const cur = (p[question.id] as string[] | undefined) ?? [];
-                      const next = cur.includes(v) ? cur.filter((x) => x !== v) : [...cur, v];
-                      return { ...p, [question.id]: next };
-                    })
-                  }
-                />
-              )}
-              {question.type === "slider" && (
-                <SliderInput
-                  question={question}
-                  value={typeof answers[question.id] === "number" ? (answers[question.id] as number) : 0.5}
-                  onChange={(v) => setAnswers((p) => ({ ...p, [question.id]: v }))}
-                />
-              )}
-              {question.type === "free_text" && (
-                <FreeTextInput
-                  question={question}
-                  value={(answers[question.id] as string | undefined) ?? ""}
-                  onChange={(v) => setAnswers((p) => ({ ...p, [question.id]: v }))}
-                />
-              )}
-              {error && (
-                <p className="rounded-lg border border-red-400/30 bg-red-500/10 px-3 py-2 text-sm text-red-300 mt-3">
-                  {error}
-                </p>
-              )}
-            </div>
-          </div>
+              <div className="flex-1 flex items-center overflow-visible">
+                <div className="w-full">
+                  {question.type === "dropdown" && (
+                    <DropdownInput
+                      question={question}
+                      value={answers[question.id] as string | undefined}
+                      onChange={(v) => setAnswers((p) => ({ ...p, [question.id]: v }))}
+                    />
+                  )}
+                  {question.type === "location" && (
+                    <LocationInput
+                      question={question}
+                      country={answers[question.id] as string | undefined}
+                      city={answers[`${question.id}_city`] as string | undefined}
+                      onCountry={(v) => setAnswers((p) => ({ ...p, [question.id]: v }))}
+                      onCity={(v) => setAnswers((p) => ({ ...p, [`${question.id}_city`]: v }))}
+                    />
+                  )}
+                  {question.type === "multi_select" && (
+                    <MultiSelectInput
+                      question={question}
+                      selected={(answers[question.id] as string[] | undefined) ?? []}
+                      onToggle={(v) =>
+                        setAnswers((p) => {
+                          const cur = (p[question.id] as string[] | undefined) ?? [];
+                          const next = cur.includes(v) ? cur.filter((x) => x !== v) : [...cur, v];
+                          return { ...p, [question.id]: next };
+                        })
+                      }
+                    />
+                  )}
+                  {question.type === "slider" && (
+                    <SliderInput
+                      question={question}
+                      value={typeof answers[question.id] === "number" ? (answers[question.id] as number) : 0.5}
+                      onChange={(v) => setAnswers((p) => ({ ...p, [question.id]: v }))}
+                    />
+                  )}
+                  {question.type === "free_text" && (
+                    <FreeTextInput
+                      question={question}
+                      value={(answers[question.id] as string | undefined) ?? ""}
+                      onChange={(v) => setAnswers((p) => ({ ...p, [question.id]: v }))}
+                    />
+                  )}
+                  {error && (
+                    <p className="rounded-lg border border-red-400/30 bg-red-500/10 px-3 py-2 text-sm text-red-300 mt-3">
+                      {error}
+                    </p>
+                  )}
+                </div>
+              </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Navigation */}
@@ -187,8 +250,8 @@ export default function QuizClient({ userId }: Props) {
           ) : (
             <button
               onClick={handleNext}
-              disabled={!canProceed()}
-              className="text-white/40 hover:text-white/80 transition-colors disabled:cursor-not-allowed disabled:opacity-20"
+              disabled={!canProceed() && question.id !== "q_age"}
+              className={`transition-colors ${!canProceed() && question.id !== "q_age" ? "text-white/20 cursor-not-allowed" : "text-white/40 hover:text-white/80"}`}
             >
               <FontAwesomeIcon icon={faCircleChevronRight} className="text-4xl" />
             </button>
@@ -196,6 +259,27 @@ export default function QuizClient({ userId }: Props) {
         </div>
       </div>
     </main>
+  );
+}
+
+// ── TransitionSlide ───────────────────────────────────────────────────────────
+
+function TransitionSlide({ text }: { text: string }) {
+  return (
+    <motion.div
+      className="flex-1 flex items-center justify-center text-center px-6"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5, ease: "easeInOut" }}
+    >
+      <h2
+        className="text-2xl font-semibold leading-snug"
+        style={{ color: "#AFDED4", textShadow: "0 0 40px rgba(175,222,212,0.3)" }}
+      >
+        {text}
+      </h2>
+    </motion.div>
   );
 }
 
@@ -478,14 +562,27 @@ function SliderInput({ question, value, onChange }: {
 function FreeTextInput({ question, value, onChange }: {
   question: QuizQuestion; value: string; onChange: (v: string) => void;
 }) {
+  const isAge = question.id === "q_age";
+  const num = parseInt(value);
+  const ageError = isAge && value.length > 0
+    ? num < 18 ? "Sorry, we can only match people aged 18 and over."
+    : num > 100 ? "This doesn't look right — are you sure?"
+    : null
+    : null;
+
   return (
-    <input
-      type="text"
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder={question.placeholder ?? "Type your answer…"}
-      className={inputClass}
-      style={glassInputStyle}
-    />
+    <div className="space-y-2">
+      <input
+        type={isAge ? "number" : "text"}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={question.placeholder ?? "Type your answer…"}
+        className={`${inputClass} ${isAge ? "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" : ""}`}
+        style={glassInputStyle}
+      />
+      {ageError && (
+        <p className="text-sm text-white/50 px-1">{ageError}</p>
+      )}
+    </div>
   );
 }
