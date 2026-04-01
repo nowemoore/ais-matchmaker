@@ -136,7 +136,7 @@ export default function QuizClient({ userId, onBack }: Props) {
           <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden">
             <div
               className="h-full rounded-full transition-all duration-500"
-              style={{ width: `${progress}%`, background: "linear-gradient(to right, #AFDED4, #79A79E)" }}
+              style={{ width: `${progress}%`, background: "linear-gradient(to right, #AFDED4, #81afa5)" }}
             />
           </div>
         </div>
@@ -546,11 +546,11 @@ function SliderInput({ question, value, onChange }: {
       <input
         type="range" min={0} max={100} value={pct}
         onChange={(e) => onChange(Number(e.target.value) / 100)}
-        className="w-full cursor-pointer accent-[#AFDED4]"
+        className="w-full cursor-pointer accent-[#81afa5]"
       />
       <div className="flex justify-between text-sm text-white/40">
         <span>{question.sliderMin}</span>
-        <span className="text-[#AFDED4]/70">{pct}%</span>
+        <span className="text-[#81afa5]">{pct}%</span>
         <span>{question.sliderMax}</span>
       </div>
     </div>

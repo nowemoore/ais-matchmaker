@@ -18,7 +18,7 @@ const config: Config = {
         taupe: "#B2AB99",
         mint:  "#AFDED4",
         sage: {
-          DEFAULT: "#79A79E",
+          DEFAULT: "#81afa5",
           dark:    "#5f8b83",
           light:   "#c8e8e3",
         },
