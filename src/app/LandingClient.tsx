@@ -8,6 +8,7 @@ import {
   faGlobe, faCompass, faChevronCircleRight, faChevronDown, faHouse,
 } from "@fortawesome/free-solid-svg-icons";
 import QuizClient from "./quiz/QuizClient";
+import RotatingQuestion from "./RotatingQuestion";
 
 const CHIPS = [
   { label: "AI Safety",           icon: faShield },
@@ -84,6 +85,9 @@ export default function LandingClient({ userId }: Props) {
                     now in early access
                   </div>
                 </div>
+
+                {/* Rotating question */}
+                <RotatingQuestion />
 
                 {/* Title */}
                 <div className="flex items-end justify-center gap-3">
