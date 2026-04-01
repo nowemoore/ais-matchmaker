@@ -121,7 +121,6 @@
         { "label": "independent research", "value": "work_independent", "weights": { "work_independent": 1.0 } },
         { "label": "volunteering", "value": "work_volunteer", "weights": { "work_volunteer": 1.0 } },
         { "label": "running a programme", "value": "work_volunteer", "weights": { "work_volunteer": 1.0 } },
-    
         { "label": "other", "value": "work_unsure", "weights": {} },
         { "label": "not sure yet", "value": "work_unsure", "weights": {} }
       ]
