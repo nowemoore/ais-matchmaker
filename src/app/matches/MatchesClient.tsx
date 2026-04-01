@@ -244,7 +244,7 @@ function ScoreRing({ pct }: { pct: number }) {
       <defs>
         <linearGradient id="sgrd" x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" stopColor="#AFDED4" />
-          <stop offset="100%" stopColor="#79A79E" />
+          <stop offset="100%" stopColor="#81afa5" />
         </linearGradient>
       </defs>
     </svg>
