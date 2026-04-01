@@ -169,7 +169,7 @@ export default function QuizClient({ userId, onBack }: Props) {
             ) : (
               <motion.div
                 key={question.id}
-                className="flex-1 flex flex-col"
+                className="flex-1 flex flex-col min-h-0"
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, ease: "easeOut" }}
@@ -179,7 +179,7 @@ export default function QuizClient({ userId, onBack }: Props) {
                 {question.hint && <p className="text-sm text-white/50">{question.hint}</p>}
               </div>
 
-              <div className="flex-1 overflow-y-auto no-scrollbar">
+              <div className="flex-1 min-h-0 overflow-y-auto no-scrollbar">
                 <div className="w-full">
                   {question.type === "dropdown" && (
                     <DropdownInput
@@ -518,7 +518,7 @@ function MultiSelectInput({ question, selected, onToggle }: {
   question: QuizQuestion; selected: string[]; onToggle: (v: string) => void;
 }) {
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap gap-2 justify-center">
       {question.options?.map((opt) => {
         const active = selected.includes(opt.value);
         return (
