@@ -91,9 +91,6 @@ export default function LandingClient({ userId }: Props) {
 
                 {/* Title */}
                 <div className="flex items-end justify-center gap-3">
-                  <span className="invisible inline-flex items-center px-3 py-0.5 text-xl font-medium mb-1.5" aria-hidden>
-                    v1.0
-                  </span>
                   <h1
                     className="text-6xl sm:text-7xl tracking-tight leading-none my-8"
                     style={{ fontFamily: "'Boldonse', system-ui" }}
@@ -102,7 +99,7 @@ export default function LandingClient({ userId }: Props) {
                     <span className="text-white">AIS</span>
                     <span style={{ color: "#AFDED4" }}>BOOK</span>
                   </h1>
-                  <span className="inline-flex items-center rounded-full border border-[#AFDED4]/50 bg-[#AFDED4]/10 px-3 py-0.5 text-xl font-medium text-[#AFDED4] backdrop-blur-sm tracking-normal mb-1.5">
+                  <span className="inline-flex items-center rounded-full border border-[#5c9d8b]/50 bg-[#354b45]/10 px-3 py-0.5 text-xl font-medium text-[#5c9d8b] backdrop-blur-sm tracking-normal mb-1.5">
                     v1.0
                   </span>
                 </div>

@@ -26,7 +26,7 @@ export default function RotatingQuestion() {
 
   return (
     <p
-      className="text-base sm:text-lg font-medium text-[#AFDED4] min-h-[1.75rem] transition-opacity duration-400"
+      className="text-base sm:text-lg font-medium text-[#5c9d8b] min-h-[1.75rem] transition-opacity duration-400"
       style={{ opacity: visible ? 1 : 0 }}
     >
       {QUESTIONS[index]}
