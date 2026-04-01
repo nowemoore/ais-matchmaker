@@ -20,6 +20,7 @@ const CHIPS = [
 
 const BG = {
   background: "radial-gradient(ellipse 120% 80% at 50% 40%, #2a2a2a 0%, #1a1a1a 40%, #0f0f0f 100%)",
+  backgroundAttachment: "fixed",
 };
 
 const HOW_IT_WORKS = [
@@ -54,7 +55,7 @@ export default function LandingClient({ userId }: Props) {
 
   return (
     <main
-      className={`relative text-white ${showQuiz ? "h-screen overflow-hidden" : "overflow-y-auto"}`}
+      className={`relative text-white no-scrollbar ${showQuiz ? "h-screen overflow-hidden" : "overflow-y-auto"}`}
       style={BG}
     >
       <AnimatePresence mode="wait">
