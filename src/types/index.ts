@@ -29,7 +29,7 @@ export type TagKey =
   | "toc_direct" | "toc_policy" | "toc_advocacy" | "toc_movement" | "toc_earning" | "toc_research" | "toc_community"
   | "toc_ideation"
   // Work mode
-  | "work_start_org" | "work_contribute" | "work_independent" | "work_advise" | "work_volunteer" | "work_co_founder"
+  | "work_start_org" | "work_start_nonprofit" | "work_contribute" | "work_independent" | "work_advise" | "work_volunteer" | "work_co_founder"
   | "work_talent" | "work_programme"
   // Impact
   | "imp_xrisk" | "imp_research" | "imp_policy" | "imp_community" | "imp_talent" | "imp_funding" | "imp_narratives" | "imp_tools" | "imp_institutions" | "imp_near_term"
@@ -53,7 +53,7 @@ export interface MatchResult {
 
 // ── Quiz config types ─────────────────────────────────────────────────────────
 
-export type QuestionType = "dropdown" | "multi_select" | "slider" | "free_text" | "location";
+export type QuestionType = "dropdown" | "multi_select" | "slider" | "free_text" | "location" | "contact";
 
 export interface QuizOption {
   label: string;
