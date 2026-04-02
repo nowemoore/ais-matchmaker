@@ -1,8 +1,5 @@
 import { NextRequest } from "next/server";
-
-// Requires RESEND_API_KEY env var.
-// Sign up free at resend.com, verify nowe.moore@gmail.com as a contact,
-// and add the key to Vercel environment variables.
+import { createClient } from "@supabase/supabase-js";
 
 export async function POST(req: NextRequest) {
   const { message, page } = await req.json();
@@ -11,28 +8,18 @@ export async function POST(req: NextRequest) {
     return Response.json({ error: "No message provided" }, { status: 400 });
   }
 
-  const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) {
-    return Response.json({ error: "Email service not configured" }, { status: 500 });
-  }
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
 
-  const res = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      from: "FAISBOOK <onboarding@resend.dev>",
-      to: "nowe.moore@gmail.com",
-      subject: "Bug Report — FAISBOOK",
-      text: `Page: ${page || "unknown"}\n\n${message}`,
-    }),
-  });
+  const { error } = await supabase
+    .from("bug_reports")
+    .insert({ message: message.trim(), page: page ?? null });
 
-  if (!res.ok) {
-    const body = await res.text();
-    return Response.json({ error: body }, { status: 500 });
+  if (error) {
+    console.error("[report-bug]", error.message);
+    return Response.json({ error: error.message }, { status: 500 });
   }
 
   return Response.json({ success: true });
