@@ -46,6 +46,10 @@ export default function QuizClient({ onBack }: Props) {
   const [showReview, setShowReview] = useState(false);
   const [checkingEmail, setCheckingEmail] = useState(false);
   const [showReturningUser, setShowReturningUser] = useState(false);
+  const [showVerification, setShowVerification] = useState(false);
+  const [verificationCode, setVerificationCode] = useState("");
+  const [verifyError, setVerifyError] = useState<string | null>(null);
+  const [sendingCode, setSendingCode] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showBugReport, setShowBugReport] = useState(false);
   const [bugMessage, setBugMessage] = useState("");
@@ -129,7 +133,47 @@ export default function QuizClient({ onBack }: Props) {
     }
   }
 
+  async function handleSendCode() {
+    const email = answers["q_email"] as string;
+    setSendingCode(true);
+    setVerifyError(null);
+    const res = await fetch("/api/send-verification", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+    const data = await res.json();
+    setSendingCode(false);
+    if (!res.ok) { setVerifyError("Couldn't send the code. Try again."); return; }
+    // Dev fallback: show code inline if no email service is set up
+    if (data.dev_code) {
+      setVerifyError(`[dev] Your code is: ${data.dev_code}`);
+    }
+    setVerificationCode("");
+    setShowVerification(true);
+  }
+
+  async function handleVerifyCode() {
+    const email = answers["q_email"] as string;
+    setSendingCode(true);
+    setVerifyError(null);
+    const res = await fetch("/api/verify-code", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, code: verificationCode }),
+    });
+    const { valid } = await res.json();
+    setSendingCode(false);
+    if (!valid) { setVerifyError("That code is incorrect or has expired."); return; }
+    // Verified — continue with quiz
+    setShowVerification(false);
+    setShowReturningUser(false);
+    const nextIndex = currentIndex + 1;
+    setCurrentIndex(nextIndex);
+  }
+
   function handleBack() {
+    if (showVerification) { setShowVerification(false); return; }
     if (showReview) { setShowReview(false); return; }
     if (showReturningUser) { setShowReturningUser(false); return; }
     if (transition) {
@@ -320,6 +364,51 @@ export default function QuizClient({ onBack }: Props) {
                 </p>
                 <p className="text-white/30 text-xs">Keep doing great work until then.</p>
               </motion.div>
+            ) : showVerification ? (
+              <motion.div
+                key="verification"
+                className="flex-1 flex flex-col items-center justify-center text-center gap-5"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
+              >
+                <div>
+                  <h2 className="text-xl font-semibold text-white">Check your inbox</h2>
+                  <p className="text-sm text-white/50 mt-1.5">
+                    We sent a 6-digit code to{" "}
+                    <span className="text-[#AFDED4]">{answers["q_email"] as string}</span>
+                  </p>
+                </div>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={verificationCode}
+                  onChange={(e) => {
+                    setVerificationCode(e.target.value.replace(/\D/g, "").slice(0, 6));
+                    setVerifyError(null);
+                  }}
+                  placeholder="000000"
+                  className={`${inputClass} text-center text-2xl tracking-[0.4em]`}
+                  style={glassInputStyle}
+                  autoFocus
+                />
+                {verifyError && <p className="text-sm text-white/50">{verifyError}</p>}
+                <button
+                  onClick={handleVerifyCode}
+                  disabled={verificationCode.length !== 6 || sendingCode}
+                  className="w-full rounded-full border border-[#AFDED4]/40 bg-[#AFDED4]/10 px-5 py-3 text-sm font-semibold text-[#AFDED4] hover:bg-[#AFDED4]/20 transition-colors disabled:opacity-40"
+                >
+                  {sendingCode ? "Verifying…" : "Verify"}
+                </button>
+                <button
+                  onClick={handleSendCode}
+                  disabled={sendingCode}
+                  className="text-xs text-white/30 hover:text-white/50 transition-colors"
+                >
+                  Resend code
+                </button>
+              </motion.div>
             ) : showReturningUser ? (
               <motion.div
                 key="returning-user"
@@ -344,10 +433,11 @@ export default function QuizClient({ onBack }: Props) {
                     {saving ? "Saving…" : "Match me ASAP with my existing profile"}
                   </button>
                   <button
-                    onClick={() => { setShowReturningUser(false); const nextIndex = currentIndex + 1; setCurrentIndex(nextIndex); }}
-                    className="w-full rounded-full border border-white/15 bg-white/5 px-5 py-3 text-sm font-medium text-white/60 hover:bg-white/10 transition-colors"
+                    onClick={handleSendCode}
+                    disabled={sendingCode}
+                    className="w-full rounded-full border border-white/15 bg-white/5 px-5 py-3 text-sm font-medium text-white/60 hover:bg-white/10 transition-colors disabled:opacity-40"
                   >
-                    Update my preferences
+                    {sendingCode ? "Sending code…" : "Update my preferences"}
                   </button>
                 </div>
                 {error && <p className="text-sm text-red-300">{error}</p>}
@@ -508,13 +598,13 @@ export default function QuizClient({ onBack }: Props) {
         <div className={`flex items-center justify-center gap-6 ${showSuccess ? "invisible" : ""}`}>
           <button
             onClick={handleBack}
-            disabled={!showReview && !showReturningUser && currentIndex === 0}
+            disabled={!showReview && !showReturningUser && !showVerification && currentIndex === 0}
             className="text-white/40 hover:text-white/80 transition-colors disabled:cursor-not-allowed disabled:opacity-20"
           >
             <FontAwesomeIcon icon={faCircleChevronLeft} className="text-4xl" />
           </button>
 
-          {showReturningUser ? null : showReview ? (
+          {showReturningUser || showVerification ? null : showReview ? (
             <button
               onClick={handleSubmit}
               disabled={!agreedToTerms || saving}
