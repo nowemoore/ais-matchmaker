@@ -148,14 +148,10 @@ export default function LandingClient() {
                     className="text-3xl sm:text-4xl tracking-tight"
                     style={{ fontFamily: "'Boldonse', system-ui" }}
                   >
-                    What is{" "}
-                    <span style={{ color: "#AFDED4" }}>FAISBOOK</span>?
+                    New Here?
                   </h2>
                   <p className="text-white/60 text-lg leading-relaxed max-w-lg mx-auto">
-                    A matchmaker for the AI safety community. Whether you&apos;re looking
-                    for a co-founder, a mentor, a collaborator on a governance project,
-                    or just someone who thinks deeply about existential risk — we help
-                    you find your people.
+                    Here is how it works:
                   </p>
                 </div>
 
