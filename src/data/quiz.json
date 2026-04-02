@@ -43,6 +43,16 @@
       "placeholder": "e.g. 28"
     },
     {
+      "id": "q_age_preference",
+      "section": "About You",
+      "text": "How important is it that your match is around your age?",
+      "type": "slider",
+      "required": false,
+      "sliderMin": "prefer peers my age",
+      "sliderMax": "age is just a number",
+      "sliderTag": "style_age_flex"
+    },
+    {
       "id": "q_identity",
       "section": "About You",
       "text": "How do you identify?",
@@ -75,6 +85,16 @@
           "weights": {}
         }
       ]
+    },
+    {
+      "id": "q_identity_preference",
+      "section": "About You",
+      "text": "How important is it that your match identifies similarly to you?",
+      "type": "slider",
+      "required": false,
+      "sliderMin": "prefer same identity",
+      "sliderMax": "doesn't matter",
+      "sliderTag": "style_identity_flex"
     },
     {
       "id": "q_cause_areas",
