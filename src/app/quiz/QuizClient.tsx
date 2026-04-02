@@ -2,9 +2,9 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleChevronLeft, faCircleChevronRight, faCircleCheck } from "@fortawesome/free-solid-svg-icons";
+import { faLinkedin, faWhatsapp, faXTwitter, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { AnimatePresence, motion } from "framer-motion";
 import quizConfig from "@/data/quiz.json";
 import { buildTagVector } from "@/lib/quiz";
@@ -35,6 +35,12 @@ export default function QuizClient({ userId, onBack }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [attempted, setAttempted] = useState(false);
   const [transition, setTransition] = useState<string | null>("About You");
+  const [showReview, setShowReview] = useState(false);
+
+  // Review screen checkbox states
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [sendCopy, setSendCopy] = useState(false);
+  const [notifyUpdates, setNotifyUpdates] = useState(false);
 
   const question = questions[currentIndex];
   const total = questions.length;
@@ -42,7 +48,6 @@ export default function QuizClient({ userId, onBack }: Props) {
 
   function canProceed(): boolean {
     const a = answers[question.id];
-    // Age is always validated if a value has been entered
     if (question.id === "q_age" && a !== undefined && (a as string).length > 0) {
       const num = parseInt(a as string);
       if (isNaN(num) || num < 18 || num > 100) return false;
@@ -51,14 +56,20 @@ export default function QuizClient({ userId, onBack }: Props) {
     if (question.type === "location") {
       return typeof a === "string" && (a as string).length > 0;
     }
+    if (question.type === "contact") {
+      const email = answers[`${question.id}_email`] as string | undefined;
+      return typeof email === "string" && email.length > 0 && email.includes("@");
+    }
+    if (question.type === "free_text") {
+      return typeof a === "string" && (a as string).length > 0;
+    }
     if (a === undefined) return false;
     if (question.type === "multi_select") return Array.isArray(a) && a.length > 0;
-    if (question.type === "slider" || question.type === "free_text") return true;
+    if (question.type === "slider") return true;
     return typeof a === "string" && a.length > 0;
   }
 
   function handleNext() {
-    // Dismissing a transition — index was already advanced when transition was triggered
     if (transition) {
       setTransition(null);
       return;
@@ -66,11 +77,14 @@ export default function QuizClient({ userId, onBack }: Props) {
     if (!canProceed()) { setAttempted(true); return; }
     setAttempted(false);
     const nextIndex = currentIndex + 1;
-    if (nextIndex >= questions.length) return;
+    if (nextIndex >= questions.length) {
+      // Last question — go to review
+      setShowReview(true);
+      return;
+    }
     const currentSection = questions[currentIndex].section;
     const nextSection = questions[nextIndex].section;
     if (nextSection !== currentSection && SECTION_TRANSITIONS[nextSection]) {
-      // Advance index first, then show transition — so dismissing doesn't skip a question
       setCurrentIndex(nextIndex);
       setTransition(nextSection);
     } else {
@@ -79,8 +93,11 @@ export default function QuizClient({ userId, onBack }: Props) {
   }
 
   function handleBack() {
+    if (showReview) {
+      setShowReview(false);
+      return;
+    }
     if (transition) {
-      // Mid-quiz transition: go back to the question before the new section
       setTransition(null);
       setCurrentIndex((i) => Math.max(0, i - 1));
       return;
@@ -93,7 +110,6 @@ export default function QuizClient({ userId, onBack }: Props) {
     }
   }
 
-  // Keyboard shortcuts
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       const tag = (e.target as HTMLElement).tagName;
@@ -104,7 +120,7 @@ export default function QuizClient({ userId, onBack }: Props) {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [transition, currentIndex, answers]);
+  }, [transition, currentIndex, answers, showReview]);
 
   async function handleSubmit() {
     setSaving(true);
@@ -113,6 +129,10 @@ export default function QuizClient({ userId, onBack }: Props) {
     for (const q of questions) {
       if (q.type === "slider" && finalAnswers[q.id] === undefined) finalAnswers[q.id] = 0.5;
     }
+    // Attach review prefs to answers
+    finalAnswers["_send_copy"] = sendCopy ? "yes" : "no";
+    finalAnswers["_notify_updates"] = notifyUpdates ? "yes" : "no";
+
     const tagVector = buildTagVector(config, finalAnswers);
     const { error: dbError } = await supabase.from("quiz_responses").upsert(
       { user_id: userId, answers: finalAnswers, tag_vector: tagVector },
@@ -124,6 +144,7 @@ export default function QuizClient({ userId, onBack }: Props) {
   }
 
   const onFinal = currentIndex === questions.length - 1;
+  const isDropdownQ = !transition && (question.type === "dropdown" || question.type === "location");
 
   return (
     <main
@@ -132,19 +153,18 @@ export default function QuizClient({ userId, onBack }: Props) {
         background: "radial-gradient(ellipse 120% 80% at 50% 40%, #2a2a2a 0%, #1a1a1a 40%, #0f0f0f 100%)",
       }}
     >
-
       <div className="w-full max-w-xl space-y-6">
 
         {/* Progress */}
         <div className="space-y-1.5">
           <div className="flex justify-between text-sm text-white/40">
-            <span>{question.section}</span>
-            <span>{currentIndex + 1} of {total}</span>
+            <span>{showReview ? "Review" : question.section}</span>
+            <span>{showReview ? "Final step" : `${currentIndex + 1} of ${total}`}</span>
           </div>
           <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden">
             <div
               className="h-full rounded-full transition-all duration-500"
-              style={{ width: `${progress}%`, background: "linear-gradient(to right, #AFDED4, #81afa5)" }}
+              style={{ width: showReview ? "100%" : `${progress}%`, background: "linear-gradient(to right, #AFDED4, #81afa5)" }}
             />
           </div>
         </div>
@@ -155,7 +175,55 @@ export default function QuizClient({ userId, onBack }: Props) {
           style={{ height: "22rem", background: "rgba(255,255,255,0.06)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)" }}
         >
           <AnimatePresence mode="wait">
-            {transition ? (
+            {showReview ? (
+              <motion.div
+                key="review"
+                className="flex-1 flex flex-col"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
+              >
+                <div className="mb-5 text-center">
+                  <h2 className="text-xl font-semibold text-white">Almost there!</h2>
+                  <p className="text-sm text-white/50 mt-1">Please confirm before we find your matches.</p>
+                </div>
+                <div className="flex-1 min-h-0 overflow-y-auto no-scrollbar space-y-4">
+                  <ReviewCheckbox
+                    checked={agreedToTerms}
+                    onChange={setAgreedToTerms}
+                    label={
+                      <>
+                        I agree to the{" "}
+                        <a
+                          href="/terms"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="underline text-[#AFDED4] hover:text-white transition-colors"
+                        >
+                          Terms &amp; Conditions
+                        </a>
+                      </>
+                    }
+                  />
+                  <ReviewCheckbox
+                    checked={sendCopy}
+                    onChange={setSendCopy}
+                    label="Send me a copy of my responses"
+                  />
+                  <ReviewCheckbox
+                    checked={notifyUpdates}
+                    onChange={setNotifyUpdates}
+                    label="Notify me about new features, events, and opportunities"
+                  />
+                  {error && (
+                    <p className="rounded-lg border border-red-400/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">
+                      {error}
+                    </p>
+                  )}
+                </div>
+              </motion.div>
+            ) : transition ? (
               <motion.div
                 key="transition"
                 className="flex-1 flex"
@@ -174,65 +242,72 @@ export default function QuizClient({ userId, onBack }: Props) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, ease: "easeOut" }}
               >
-              <div className="space-y-1.5 mb-6 text-center">
-                <h2 className="text-xl font-semibold leading-snug text-white">{question.text}</h2>
-                {question.hint && <p className="text-sm text-white/50">{question.hint}</p>}
-              </div>
+                <div className="space-y-1.5 mb-6 text-center">
+                  <h2 className="text-xl font-semibold leading-snug text-white">{question.text}</h2>
+                  {question.hint && <p className="text-sm text-white/50">{question.hint}</p>}
+                </div>
 
-              <div className="flex-1 min-h-0 overflow-y-auto no-scrollbar">
-                <div className="min-h-full flex items-center">
-                <div className="w-full">
-                  {question.type === "dropdown" && (
-                    <DropdownInput
-                      question={question}
-                      value={answers[question.id] as string | undefined}
-                      onChange={(v) => setAnswers((p) => ({ ...p, [question.id]: v }))}
-                    />
-                  )}
-                  {question.type === "location" && (
-                    <LocationInput
-                      question={question}
-                      country={answers[question.id] as string | undefined}
-                      city={answers[`${question.id}_city`] as string | undefined}
-                      onCountry={(v) => setAnswers((p) => ({ ...p, [question.id]: v }))}
-                      onCity={(v) => setAnswers((p) => ({ ...p, [`${question.id}_city`]: v }))}
-                    />
-                  )}
-                  {question.type === "multi_select" && (
-                    <MultiSelectInput
-                      question={question}
-                      selected={(answers[question.id] as string[] | undefined) ?? []}
-                      onToggle={(v) =>
-                        setAnswers((p) => {
-                          const cur = (p[question.id] as string[] | undefined) ?? [];
-                          const next = cur.includes(v) ? cur.filter((x) => x !== v) : [...cur, v];
-                          return { ...p, [question.id]: next };
-                        })
-                      }
-                    />
-                  )}
-                  {question.type === "slider" && (
-                    <SliderInput
-                      question={question}
-                      value={typeof answers[question.id] === "number" ? (answers[question.id] as number) : 0.5}
-                      onChange={(v) => setAnswers((p) => ({ ...p, [question.id]: v }))}
-                    />
-                  )}
-                  {question.type === "free_text" && (
-                    <FreeTextInput
-                      question={question}
-                      value={(answers[question.id] as string | undefined) ?? ""}
-                      onChange={(v) => setAnswers((p) => ({ ...p, [question.id]: v }))}
-                    />
-                  )}
-                  {error && (
-                    <p className="rounded-lg border border-red-400/30 bg-red-500/10 px-3 py-2 text-sm text-red-300 mt-3">
-                      {error}
-                    </p>
-                  )}
+                <div className={`flex-1 min-h-0 no-scrollbar ${isDropdownQ ? "" : "overflow-y-auto"}`}>
+                  <div className="min-h-full flex items-center">
+                    <div className="w-full">
+                      {question.type === "dropdown" && (
+                        <DropdownInput
+                          question={question}
+                          value={answers[question.id] as string | undefined}
+                          onChange={(v) => setAnswers((p) => ({ ...p, [question.id]: v }))}
+                        />
+                      )}
+                      {question.type === "location" && (
+                        <LocationInput
+                          question={question}
+                          country={answers[question.id] as string | undefined}
+                          city={answers[`${question.id}_city`] as string | undefined}
+                          onCountry={(v) => setAnswers((p) => ({ ...p, [question.id]: v }))}
+                          onCity={(v) => setAnswers((p) => ({ ...p, [`${question.id}_city`]: v }))}
+                        />
+                      )}
+                      {question.type === "multi_select" && (
+                        <MultiSelectInput
+                          question={question}
+                          selected={(answers[question.id] as string[] | undefined) ?? []}
+                          onToggle={(v) =>
+                            setAnswers((p) => {
+                              const cur = (p[question.id] as string[] | undefined) ?? [];
+                              const next = cur.includes(v) ? cur.filter((x) => x !== v) : [...cur, v];
+                              return { ...p, [question.id]: next };
+                            })
+                          }
+                        />
+                      )}
+                      {question.type === "slider" && (
+                        <SliderInput
+                          question={question}
+                          value={typeof answers[question.id] === "number" ? (answers[question.id] as number) : 0.5}
+                          onChange={(v) => setAnswers((p) => ({ ...p, [question.id]: v }))}
+                        />
+                      )}
+                      {question.type === "free_text" && (
+                        <FreeTextInput
+                          question={question}
+                          value={(answers[question.id] as string | undefined) ?? ""}
+                          onChange={(v) => setAnswers((p) => ({ ...p, [question.id]: v }))}
+                        />
+                      )}
+                      {question.type === "contact" && (
+                        <ContactInput
+                          questionId={question.id}
+                          values={answers}
+                          onChange={(key, val) => setAnswers((p) => ({ ...p, [key]: val }))}
+                        />
+                      )}
+                      {error && (
+                        <p className="rounded-lg border border-red-400/30 bg-red-500/10 px-3 py-2 text-sm text-red-300 mt-3">
+                          {error}
+                        </p>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                </div>
-              </div>
               </motion.div>
             )}
           </AnimatePresence>
@@ -242,20 +317,29 @@ export default function QuizClient({ userId, onBack }: Props) {
         <div className="flex items-center justify-center gap-6">
           <button
             onClick={handleBack}
-            disabled={currentIndex === 0}
+            disabled={!showReview && currentIndex === 0}
             className="text-white/40 hover:text-white/80 transition-colors disabled:cursor-not-allowed disabled:opacity-20"
           >
             <FontAwesomeIcon icon={faCircleChevronLeft} className="text-4xl" />
           </button>
 
-          {onFinal ? (
+          {showReview ? (
             <button
               onClick={handleSubmit}
-              disabled={!canProceed() || saving}
+              disabled={!agreedToTerms || saving}
               className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/15 px-6 py-2.5 text-base font-semibold text-white backdrop-blur-md hover:bg-white/25 transition-colors disabled:cursor-not-allowed disabled:opacity-40 shadow-lg"
             >
-              {saving ? "Finding your matches…" : "See My Matches"}
+              {saving ? "Submitting…" : "Find My Matches"}
               {!saving && <FontAwesomeIcon icon={faCircleChevronRight} className="text-xl" />}
+            </button>
+          ) : onFinal ? (
+            <button
+              onClick={handleNext}
+              disabled={!canProceed()}
+              className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/15 px-6 py-2.5 text-base font-semibold text-white backdrop-blur-md hover:bg-white/25 transition-colors disabled:cursor-not-allowed disabled:opacity-40 shadow-lg"
+            >
+              Review My Responses
+              <FontAwesomeIcon icon={faCircleChevronRight} className="text-xl" />
             </button>
           ) : (
             <button
@@ -269,6 +353,32 @@ export default function QuizClient({ userId, onBack }: Props) {
         </div>
       </div>
     </main>
+  );
+}
+
+// ── ReviewCheckbox ────────────────────────────────────────────────────────────
+
+function ReviewCheckbox({ checked, onChange, label }: {
+  checked: boolean;
+  onChange: (v: boolean) => void;
+  label: React.ReactNode;
+}) {
+  return (
+    <label className="flex items-start gap-3 cursor-pointer group">
+      <div
+        onClick={() => onChange(!checked)}
+        className={`mt-0.5 w-5 h-5 flex-shrink-0 rounded border transition-all ${
+          checked
+            ? "border-[#AFDED4] bg-[#AFDED4]/20"
+            : "border-white/20 bg-white/5 group-hover:border-white/40"
+        } flex items-center justify-center`}
+      >
+        {checked && <FontAwesomeIcon icon={faCircleCheck} className="text-[#AFDED4] text-xs" />}
+      </div>
+      <span className="text-sm text-white/70 leading-relaxed" onClick={() => onChange(!checked)}>
+        {label}
+      </span>
+    </label>
   );
 }
 
@@ -309,12 +419,13 @@ const glassInputStyle = {
 
 // ── CustomSelect ──────────────────────────────────────────────────────────────
 
-function CustomSelect({ options, value, onChange, placeholder, searchable }: {
+function CustomSelect({ options, value, onChange, placeholder, searchable, compact }: {
   options: { label: string; value: string }[];
   value: string | undefined;
   onChange: (v: string) => void;
   placeholder?: string;
   searchable?: boolean;
+  compact?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -346,15 +457,15 @@ function CustomSelect({ options, value, onChange, placeholder, searchable }: {
       <button
         type="button"
         onClick={() => { setOpen((o) => !o); setQuery(""); }}
-        className={`flex w-full items-center justify-between border border-white/15 px-4 py-3 text-base text-left transition-colors hover:border-white/30 ${open ? "rounded-t-xl" : "rounded-xl"}`}
+        className={`flex w-full items-center justify-between border border-white/15 ${compact ? "px-3 py-2 text-sm" : "px-4 py-3 text-base"} text-left transition-colors hover:border-white/30 ${open ? "rounded-t-xl" : "rounded-xl"}`}
         style={glassInputStyle}
       >
         <span className={selected ? "text-white" : "text-white/30"}>
-          {selected ? selected.label : (placeholder ?? "Select an option…")}
+          {selected ? selected.label : (placeholder ?? "Select…")}
         </span>
         <FontAwesomeIcon
           icon={faCircleChevronLeft}
-          className="text-sm text-white/30 flex-shrink-0"
+          className="text-sm text-white/30 flex-shrink-0 ml-2"
           style={{ transform: open ? "rotate(90deg)" : "rotate(270deg)", transition: "transform 0.2s" }}
         />
       </button>
@@ -385,7 +496,7 @@ function CustomSelect({ options, value, onChange, placeholder, searchable }: {
                 key={opt.value}
                 type="button"
                 onClick={() => { onChange(opt.value); setOpen(false); setQuery(""); }}
-                className={`w-full px-4 py-2.5 text-left text-base transition-colors hover:bg-white/10 ${
+                className={`w-full px-4 py-2.5 text-left ${compact ? "text-sm" : "text-base"} transition-colors hover:bg-white/10 ${
                   value === opt.value ? "text-[#AFDED4]" : "text-white/70"
                 }`}
               >
@@ -479,6 +590,9 @@ function LocationInput({ question, country, city, onCountry, onCity }: {
     if (val.length < 2) { setSuggestions([]); setOpen(false); return; }
     debounceRef.current = setTimeout(() => fetchSuggestions(val), 300);
   }
+
+  // suppress unused warning
+  void question;
 
   return (
     <div ref={ref} className="relative w-full">
@@ -576,7 +690,7 @@ function FreeTextInput({ question, value, onChange }: {
   question: QuizQuestion; value: string; onChange: (v: string) => void;
 }) {
   const isAge = question.id === "q_age";
-  const isMultiline = !isAge;
+  const isName = question.id === "q_name";
   const num = parseInt(value);
   const ageError = isAge && value.length > 0
     ? num < 18 ? "Sorry, we can only match people aged 18 and over."
@@ -586,16 +700,7 @@ function FreeTextInput({ question, value, onChange }: {
 
   return (
     <div className="space-y-2">
-      {isMultiline ? (
-        <textarea
-          rows={4}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={question.placeholder ?? "Type your answer…"}
-          className={textareaClass}
-          style={glassInputStyle}
-        />
-      ) : (
+      {isAge ? (
         <input
           type="number"
           value={value}
@@ -604,10 +709,163 @@ function FreeTextInput({ question, value, onChange }: {
           className={`${inputClass} [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
           style={glassInputStyle}
         />
+      ) : isName ? (
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={question.placeholder ?? "Type your answer…"}
+          className={inputClass}
+          style={glassInputStyle}
+          autoFocus
+        />
+      ) : (
+        <textarea
+          rows={4}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={question.placeholder ?? "Type your answer…"}
+          className={textareaClass}
+          style={glassInputStyle}
+        />
       )}
       {ageError && (
         <p className="text-sm text-white/50 px-1">{ageError}</p>
       )}
+    </div>
+  );
+}
+
+// ── ContactInput ──────────────────────────────────────────────────────────────
+
+const COUNTRY_CODES = [
+  { label: "+1", value: "+1" },
+  { label: "+44", value: "+44" },
+  { label: "+61", value: "+61" },
+  { label: "+33", value: "+33" },
+  { label: "+49", value: "+49" },
+  { label: "+91", value: "+91" },
+  { label: "+81", value: "+81" },
+  { label: "+86", value: "+86" },
+  { label: "+7", value: "+7" },
+  { label: "+55", value: "+55" },
+  { label: "+52", value: "+52" },
+  { label: "+34", value: "+34" },
+  { label: "+39", value: "+39" },
+  { label: "+31", value: "+31" },
+  { label: "+46", value: "+46" },
+  { label: "+47", value: "+47" },
+  { label: "+45", value: "+45" },
+  { label: "+41", value: "+41" },
+  { label: "+43", value: "+43" },
+  { label: "+32", value: "+32" },
+  { label: "+64", value: "+64" },
+  { label: "+65", value: "+65" },
+  { label: "+82", value: "+82" },
+  { label: "+966", value: "+966" },
+  { label: "+971", value: "+971" },
+  { label: "+972", value: "+972" },
+  { label: "+27", value: "+27" },
+  { label: "+234", value: "+234" },
+  { label: "+254", value: "+254" },
+  { label: "+20", value: "+20" },
+  { label: "+48", value: "+48" },
+  { label: "+380", value: "+380" },
+  { label: "+90", value: "+90" },
+  { label: "+62", value: "+62" },
+  { label: "+63", value: "+63" },
+  { label: "+66", value: "+66" },
+  { label: "+84", value: "+84" },
+  { label: "+60", value: "+60" },
+];
+
+function ContactInput({ questionId, values, onChange }: {
+  questionId: string;
+  values: Record<string, AnswerValue>;
+  onChange: (key: string, val: string) => void;
+}) {
+  const email = (values[`${questionId}_email`] as string) ?? "";
+  const linkedin = (values[`${questionId}_linkedin`] as string) ?? "";
+  const whatsappCc = (values[`${questionId}_whatsapp_cc`] as string) ?? "";
+  const whatsapp = (values[`${questionId}_whatsapp`] as string) ?? "";
+  const twitter = (values[`${questionId}_twitter`] as string) ?? "";
+  const instagram = (values[`${questionId}_instagram`] as string) ?? "";
+
+  return (
+    <div className="space-y-3">
+      {/* Email — required */}
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => onChange(`${questionId}_email`, e.target.value)}
+        placeholder="Email address *"
+        className={inputClass}
+        style={glassInputStyle}
+        autoFocus
+      />
+
+      {/* LinkedIn */}
+      <div className="flex items-center gap-2.5">
+        <FontAwesomeIcon icon={faLinkedin} className="text-xl flex-shrink-0" style={{ color: "#AFDED4" }} />
+        <input
+          type="text"
+          value={linkedin}
+          onChange={(e) => onChange(`${questionId}_linkedin`, e.target.value)}
+          placeholder="LinkedIn URL or handle"
+          className={inputClass}
+          style={glassInputStyle}
+        />
+      </div>
+
+      {/* WhatsApp */}
+      <div className="flex items-center gap-2.5">
+        <FontAwesomeIcon icon={faWhatsapp} className="text-xl flex-shrink-0" style={{ color: "#AFDED4" }} />
+        <div className="flex gap-2 w-full min-w-0">
+          <div className="w-24 flex-shrink-0">
+            <CustomSelect
+              options={COUNTRY_CODES}
+              value={whatsappCc || undefined}
+              onChange={(v) => onChange(`${questionId}_whatsapp_cc`, v)}
+              placeholder="+?"
+              compact
+            />
+          </div>
+          <input
+            type="tel"
+            value={whatsapp}
+            onChange={(e) => onChange(`${questionId}_whatsapp`, e.target.value)}
+            placeholder="Phone number"
+            className={inputClass}
+            style={glassInputStyle}
+          />
+        </div>
+      </div>
+
+      {/* X / Twitter */}
+      <div className="flex items-center gap-2.5">
+        <FontAwesomeIcon icon={faXTwitter} className="text-xl flex-shrink-0" style={{ color: "#AFDED4" }} />
+        <input
+          type="text"
+          value={twitter}
+          onChange={(e) => onChange(`${questionId}_twitter`, e.target.value)}
+          placeholder="X / Twitter handle"
+          className={inputClass}
+          style={glassInputStyle}
+        />
+      </div>
+
+      {/* Instagram */}
+      <div className="flex items-center gap-2.5">
+        <FontAwesomeIcon icon={faInstagram} className="text-xl flex-shrink-0" style={{ color: "#AFDED4" }} />
+        <input
+          type="text"
+          value={instagram}
+          onChange={(e) => onChange(`${questionId}_instagram`, e.target.value)}
+          placeholder="Instagram handle"
+          className={inputClass}
+          style={glassInputStyle}
+        />
+      </div>
     </div>
   );
 }
