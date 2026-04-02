@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleChevronLeft, faCircleChevronRight, faCircleCheck } from "@fortawesome/free-solid-svg-icons";
+import { faCircleChevronLeft, faCircleChevronRight, faCircleCheck, faBug } from "@fortawesome/free-solid-svg-icons";
 import { faLinkedin, faWhatsapp, faXTwitter, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { AnimatePresence, motion } from "framer-motion";
 import quizConfig from "@/data/quiz.json";
@@ -74,10 +74,7 @@ export default function QuizClient({ onBack }: Props) {
     if (question.type === "location") {
       return typeof a === "string" && (a as string).length > 0;
     }
-    if (question.type === "contact") {
-      const email = answers[`${question.id}_email`] as string | undefined;
-      return typeof email === "string" && email.length > 0 && email.includes("@");
-    }
+    if (question.type === "contact") return true;
     if (question.type === "free_text") {
       return typeof a === "string" && (a as string).length > 0;
     }
@@ -101,7 +98,7 @@ export default function QuizClient({ onBack }: Props) {
       const { data } = await supabase
         .from("quiz_responses")
         .select("user_id")
-        .filter("answers->>q_email", "eq", email)
+        .contains("answers", { q_email: email })
         .limit(1);
       setCheckingEmail(false);
       if (data && data.length > 0) {
@@ -219,9 +216,10 @@ export default function QuizClient({ onBack }: Props) {
       {/* Bug report button */}
       <button
         onClick={() => { setShowBugReport(true); setBugMessage(""); setBugSent(false); }}
-        className="fixed top-4 right-4 z-50 flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-white/40 hover:text-white/70 hover:border-white/30 transition-colors backdrop-blur-md"
+        className="fixed top-4 right-4 z-50 flex items-center gap-1.5 text-white/40 hover:text-white/80 transition-colors"
       >
-        <span>🐛</span> report bug
+        <FontAwesomeIcon icon={faBug} className="w-4 h-4" />
+        <span className="text-xs">report bug</span>
       </button>
 
       {/* Bug report modal */}
@@ -294,7 +292,7 @@ export default function QuizClient({ onBack }: Props) {
         {/* Card */}
         <div
           className="rounded-2xl border border-white/15 p-8 shadow-xl flex flex-col overflow-visible"
-          style={{ height: "22rem", background: "rgba(255,255,255,0.06)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)" }}
+          style={{ height: showReview ? "36rem" : "22rem", background: "rgba(255,255,255,0.06)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", transition: "height 0.3s ease" }}
         >
           <AnimatePresence mode="wait">
             {showSuccess ? (
@@ -351,17 +349,31 @@ export default function QuizClient({ onBack }: Props) {
             ) : showReview ? (
               <motion.div
                 key="review"
-                className="flex-1 flex flex-col"
+                className="flex-1 flex flex-col min-h-0"
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.35, ease: "easeOut" }}
               >
-                <div className="mb-5 text-center">
+                <div className="mb-4 text-center">
                   <h2 className="text-xl font-semibold text-white">Almost there!</h2>
-                  <p className="text-sm text-white/50 mt-1">Please confirm before we find your matches.</p>
+                  <p className="text-sm text-white/50 mt-1">Here is what we have on you.</p>
                 </div>
-                <div className="flex-1 min-h-0 overflow-y-auto no-scrollbar space-y-4">
+
+                {/* Summary */}
+                <div className="flex-1 min-h-0 overflow-y-auto no-scrollbar mb-4 space-y-1.5">
+                  {buildSummary(questions, answers).map(({ label, value }) => (
+                    <div key={label} className="flex gap-2 text-xs leading-snug">
+                      <span className="text-white/35 flex-shrink-0 w-32 text-right">{label}</span>
+                      <span className="text-white/70">{value}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Divider */}
+                <div className="h-px bg-white/10 mb-4" />
+
+                <div className="space-y-3">
                   <ReviewCheckbox
                     checked={agreedToTerms}
                     onChange={setAgreedToTerms}
@@ -369,7 +381,7 @@ export default function QuizClient({ onBack }: Props) {
                       <>
                         I agree to the{" "}
                         <a
-                          href="https://docs.google.com/document/d/14WvzbqOLjY5WElNTJTp2CIqnLAn9W03H1siGRAJgVsc/edit?usp=sharing"
+                          href="/terms"
                           target="_blank"
                           rel="noopener noreferrer"
                           className="underline text-[#AFDED4] hover:text-white transition-colors"
@@ -576,6 +588,42 @@ function TransitionSlide({ text }: { text: string }) {
       </h2>
     </motion.div>
   );
+}
+
+// ── buildSummary ──────────────────────────────────────────────────────────────
+
+function buildSummary(qs: QuizQuestion[], answers: Record<string, AnswerValue>) {
+  const items: { label: string; value: string }[] = [];
+  for (const q of qs) {
+    if (q.type === "contact") {
+      const fields = [
+        answers[`${q.id}_linkedin`]    ? `LinkedIn: ${answers[`${q.id}_linkedin`]}`    : null,
+        answers[`${q.id}_whatsapp`]    ? `WhatsApp: ${answers[`${q.id}_whatsapp_cc`] ?? ""}${answers[`${q.id}_whatsapp`]}`  : null,
+        answers[`${q.id}_twitter`]     ? `X: ${answers[`${q.id}_twitter`]}`            : null,
+        answers[`${q.id}_instagram`]   ? `Instagram: ${answers[`${q.id}_instagram`]}`  : null,
+      ].filter(Boolean);
+      if (fields.length) items.push({ label: "Other contact", value: fields.join(" · ") });
+      continue;
+    }
+    const a = answers[q.id];
+    if (a === undefined || a === "" || (Array.isArray(a) && a.length === 0)) continue;
+    let value = "";
+    if (q.type === "slider") {
+      const pct = Math.round((a as number) * 100);
+      value = `${q.sliderMin}  ·  ${q.sliderMax}  →  ${pct}%`;
+    } else if (q.type === "multi_select") {
+      value = (a as string[]).map(v => q.options?.find(o => o.value === v)?.label ?? v).join(", ");
+    } else if (q.type === "dropdown") {
+      value = q.options?.find(o => o.value === (a as string))?.label ?? (a as string);
+    } else if (q.type === "location") {
+      const city = answers[`${q.id}_city`] as string | undefined;
+      value = [city, a as string].filter(Boolean).join(", ");
+    } else {
+      value = a as string;
+    }
+    if (value) items.push({ label: q.text.replace(/\?$/, ""), value });
+  }
+  return items;
 }
 
 // ── Shared styles ─────────────────────────────────────────────────────────────
@@ -960,7 +1008,6 @@ function ContactInput({ questionId, values, onChange }: {
   values: Record<string, AnswerValue>;
   onChange: (key: string, val: string) => void;
 }) {
-  const email = (values[`${questionId}_email`] as string) ?? (values["q_email"] as string) ?? "";
   const linkedin = (values[`${questionId}_linkedin`] as string) ?? "";
   const whatsappCc = (values[`${questionId}_whatsapp_cc`] as string) ?? "";
   const whatsapp = (values[`${questionId}_whatsapp`] as string) ?? "";
@@ -969,17 +1016,6 @@ function ContactInput({ questionId, values, onChange }: {
 
   return (
     <div className="space-y-3">
-      {/* Email — required */}
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => onChange(`${questionId}_email`, e.target.value)}
-        placeholder="Email address *"
-        className={inputClass}
-        style={glassInputStyle}
-        autoFocus
-      />
-
       {/* LinkedIn */}
       <div className="flex items-center gap-2.5">
         <FontAwesomeIcon icon={faLinkedin} className="text-xl flex-shrink-0" style={{ color: "#AFDED4" }} />
@@ -990,6 +1026,7 @@ function ContactInput({ questionId, values, onChange }: {
           placeholder="LinkedIn URL or handle"
           className={inputClass}
           style={glassInputStyle}
+          autoFocus
         />
       </div>
 
