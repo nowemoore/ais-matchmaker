@@ -1,6 +1,15 @@
 {
   "questions": [
     {
+      "id": "q_email",
+      "section": "About You",
+      "text": "What's your email address?",
+      "hint": "We'll use this to send you your matches.",
+      "type": "free_text",
+      "required": true,
+      "placeholder": "e.g. alex@example.com"
+    },
+    {
       "id": "q_name",
       "section": "About You",
       "text": "What's your preferred name?",
@@ -258,7 +267,7 @@
         },
         {
           "label": "other",
-          "value": "work_unsure",
+          "value": "ais_other",
           "weights": {}
         },
         {
@@ -829,7 +838,7 @@
         },
         {
           "label": "N/A",
-          "value": "work_unsure",
+          "value": "prof_na",
           "weights": {}
         },
         {
@@ -877,9 +886,9 @@
         },
         {
           "label": "advocacy",
-          "value": "skill_policy",
+          "value": "skill_advocacy",
           "weights": {
-            "skill_policy": 1.0
+            "skill_advocacy": 1.0
           }
         },
         {
