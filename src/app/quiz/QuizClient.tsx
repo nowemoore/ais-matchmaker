@@ -46,6 +46,8 @@ export default function QuizClient({ onBack }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [transition, setTransition] = useState<string | null>("About You");
   const [showReview, setShowReview] = useState(false);
+  const [checkingEmail, setCheckingEmail] = useState(false);
+  const [showReturningUser, setShowReturningUser] = useState(false);
 
   // Review screen checkbox states
   const [agreedToTerms, setAgreedToTerms] = useState(false);
@@ -61,6 +63,9 @@ export default function QuizClient({ onBack }: Props) {
     if (question.id === "q_age" && a !== undefined && (a as string).length > 0) {
       const num = parseInt(a as string);
       if (isNaN(num) || num < 18 || num > 100) return false;
+    }
+    if (question.id === "q_email") {
+      return typeof a === "string" && (a as string).includes("@") && (a as string).length > 3;
     }
     if (!question.required) return true;
     if (question.type === "location") {
@@ -79,12 +84,29 @@ export default function QuizClient({ onBack }: Props) {
     return typeof a === "string" && a.length > 0;
   }
 
-  function handleNext() {
+  async function handleNext() {
     if (transition) {
       setTransition(null);
       return;
     }
     if (!canProceed()) { return; }
+
+    // Check for existing user when leaving email question
+    if (question.id === "q_email") {
+      setCheckingEmail(true);
+      const email = answers["q_email"] as string;
+      const { data } = await supabase
+        .from("quiz_responses")
+        .select("user_id")
+        .filter("answers->>q_email", "eq", email)
+        .limit(1);
+      setCheckingEmail(false);
+      if (data && data.length > 0) {
+        setShowReturningUser(true);
+        return;
+      }
+    }
+
     const nextIndex = currentIndex + 1;
     if (nextIndex >= questions.length) {
       // Last question — go to review
@@ -102,10 +124,8 @@ export default function QuizClient({ onBack }: Props) {
   }
 
   function handleBack() {
-    if (showReview) {
-      setShowReview(false);
-      return;
-    }
+    if (showReview) { setShowReview(false); return; }
+    if (showReturningUser) { setShowReturningUser(false); return; }
     if (transition) {
       setTransition(null);
       setCurrentIndex((i) => Math.max(0, i - 1));
@@ -160,6 +180,21 @@ export default function QuizClient({ onBack }: Props) {
   const onFinal = currentIndex === questions.length - 1;
   const isDropdownQ = !transition && (question.type === "dropdown" || question.type === "location");
 
+  async function handleMatchMeNow() {
+    setSaving(true);
+    setError(null);
+    const finalAnswers = { ...answers, _notify_updates: "no", _send_copy: "no" };
+    const tagVector = buildTagVector(config, finalAnswers);
+    const { error: dbError } = await supabase.from("quiz_responses").upsert(
+      { user_id: userId, answers: finalAnswers, tag_vector: tagVector },
+      { onConflict: "user_id" }
+    );
+    setSaving(false);
+    if (dbError) { setError(dbError.message); return; }
+    router.push("/matches");
+    router.refresh();
+  }
+
   return (
     <main
       className="relative min-h-screen flex flex-col items-center justify-center px-4 py-16 text-white overflow-hidden"
@@ -189,7 +224,39 @@ export default function QuizClient({ onBack }: Props) {
           style={{ height: "22rem", background: "rgba(255,255,255,0.06)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)" }}
         >
           <AnimatePresence mode="wait">
-            {showReview ? (
+            {showReturningUser ? (
+              <motion.div
+                key="returning-user"
+                className="flex-1 flex flex-col items-center justify-center text-center gap-5"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
+              >
+                <div>
+                  <h2 className="text-xl font-semibold text-white">Welcome back!</h2>
+                  <p className="text-sm text-white/50 mt-1.5">
+                    We found an existing profile for <span className="text-[#AFDED4]">{answers["q_email"] as string}</span>.
+                  </p>
+                </div>
+                <div className="flex flex-col gap-3 w-full">
+                  <button
+                    onClick={handleMatchMeNow}
+                    disabled={saving}
+                    className="w-full rounded-full border border-[#AFDED4]/40 bg-[#AFDED4]/10 px-5 py-3 text-sm font-semibold text-[#AFDED4] hover:bg-[#AFDED4]/20 transition-colors disabled:opacity-40"
+                  >
+                    {saving ? "Saving…" : "Match me ASAP with my existing profile"}
+                  </button>
+                  <button
+                    onClick={() => { setShowReturningUser(false); const nextIndex = currentIndex + 1; setCurrentIndex(nextIndex); }}
+                    className="w-full rounded-full border border-white/15 bg-white/5 px-5 py-3 text-sm font-medium text-white/60 hover:bg-white/10 transition-colors"
+                  >
+                    Update my preferences
+                  </button>
+                </div>
+                {error && <p className="text-sm text-red-300">{error}</p>}
+              </motion.div>
+            ) : showReview ? (
               <motion.div
                 key="review"
                 className="flex-1 flex flex-col"
@@ -331,13 +398,13 @@ export default function QuizClient({ onBack }: Props) {
         <div className="flex items-center justify-center gap-6">
           <button
             onClick={handleBack}
-            disabled={!showReview && currentIndex === 0}
+            disabled={!showReview && !showReturningUser && currentIndex === 0}
             className="text-white/40 hover:text-white/80 transition-colors disabled:cursor-not-allowed disabled:opacity-20"
           >
             <FontAwesomeIcon icon={faCircleChevronLeft} className="text-4xl" />
           </button>
 
-          {showReview ? (
+          {showReturningUser ? null : showReview ? (
             <button
               onClick={handleSubmit}
               disabled={!agreedToTerms || saving}
@@ -355,6 +422,8 @@ export default function QuizClient({ onBack }: Props) {
               Review My Responses
               <FontAwesomeIcon icon={faCircleChevronRight} className="text-xl" />
             </button>
+          ) : checkingEmail ? (
+            <span className="text-sm text-white/40 animate-pulse">Checking…</span>
           ) : (
             <button
               onClick={handleNext}
@@ -705,6 +774,7 @@ function FreeTextInput({ question, value, onChange }: {
 }) {
   const isAge = question.id === "q_age";
   const isName = question.id === "q_name";
+  const isEmail = question.id === "q_email";
   const num = parseInt(value);
   const ageError = isAge && value.length > 0
     ? num < 18 ? "Sorry, we can only match people aged 18 and over."
@@ -723,9 +793,9 @@ function FreeTextInput({ question, value, onChange }: {
           className={`${inputClass} [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
           style={glassInputStyle}
         />
-      ) : isName ? (
+      ) : isName || isEmail ? (
         <input
-          type="text"
+          type={isEmail ? "email" : "text"}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={question.placeholder ?? "Type your answer…"}
@@ -798,7 +868,7 @@ function ContactInput({ questionId, values, onChange }: {
   values: Record<string, AnswerValue>;
   onChange: (key: string, val: string) => void;
 }) {
-  const email = (values[`${questionId}_email`] as string) ?? "";
+  const email = (values[`${questionId}_email`] as string) ?? (values["q_email"] as string) ?? "";
   const linkedin = (values[`${questionId}_linkedin`] as string) ?? "";
   const whatsappCc = (values[`${questionId}_whatsapp_cc`] as string) ?? "";
   const whatsapp = (values[`${questionId}_whatsapp`] as string) ?? "";
