@@ -39,11 +39,7 @@ const HOW_IT_WORKS = [
   },
 ];
 
-interface Props {
-  userId: string | null;
-}
-
-export default function LandingClient({ userId }: Props) {
+export default function LandingClient() {
   const [showQuiz, setShowQuiz] = useState(false);
 
   // Prevent body/html from scrolling — main handles it
@@ -53,11 +49,7 @@ export default function LandingClient({ userId }: Props) {
   }, []);
 
   const handleCTA = () => {
-    if (userId) {
-      setShowQuiz(true);
-    } else {
-      window.location.href = "/auth";
-    }
+    setShowQuiz(true);
   };
 
   return (
@@ -211,7 +203,7 @@ export default function LandingClient({ userId }: Props) {
               <FontAwesomeIcon icon={faHouse} className="w-4 h-4" />
             </button>
 
-            <QuizClient userId={userId!} onBack={() => setShowQuiz(false)} />
+            <QuizClient onBack={() => setShowQuiz(false)} />
           </motion.div>
         )}
       </AnimatePresence>
