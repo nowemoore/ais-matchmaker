@@ -40,6 +40,7 @@ export type TagKey =
   | "need_collaborators" | "need_funding" | "need_time" | "need_skills" | "need_direction" | "need_feedback" | "need_network" | "need_motivation"
   // Work style (slider values 0–1)
   | "style_in_person" | "style_collaborative" | "style_rigorous" | "style_systems" | "style_specialist" | "style_extroverted" | "style_launch"
+  | "style_age_flex" | "style_identity_flex"
   // Engagement level
   | "ais_engagement";
 
