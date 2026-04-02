@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleChevronLeft, faCircleChevronRight, faCircleCheck, faBug, faHeart } from "@fortawesome/free-solid-svg-icons";
+import { faCircleChevronLeft, faCircleChevronRight, faCircleCheck, faBug } from "@fortawesome/free-solid-svg-icons";
 import { faLinkedin, faWhatsapp, faXTwitter, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { AnimatePresence, motion } from "framer-motion";
 import quizConfig from "@/data/quiz.json";
@@ -95,16 +95,22 @@ export default function QuizClient({ onBack }: Props) {
     if (question.id === "q_email") {
       setCheckingEmail(true);
       const email = answers["q_email"] as string;
-      const { data } = await supabase
-        .from("quiz_responses")
-        .select("user_id")
-        .contains("answers", { q_email: email })
-        .limit(1);
-      setCheckingEmail(false);
-      if (data && data.length > 0) {
-        setShowReturningUser(true);
-        return;
+      try {
+        const res = await fetch("/api/check-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        });
+        const { exists } = await res.json();
+        if (exists) {
+          setCheckingEmail(false);
+          setShowReturningUser(true);
+          return;
+        }
+      } catch (e) {
+        console.error("Email check failed:", e);
       }
+      setCheckingEmail(false);
     }
 
     const nextIndex = currentIndex + 1;
@@ -381,7 +387,7 @@ export default function QuizClient({ onBack }: Props) {
                       <>
                         I agree to the{" "}
                         <a
-                          href="https://docs.google.com/document/d/14WvzbqOLjY5WElNTJTp2CIqnLAn9W03H1siGRAJgVsc/edit?tab=t.0#heading=h.x5ug9xs9braa"
+                          href="/terms"
                           target="_blank"
                           rel="noopener noreferrer"
                           className="underline text-[#AFDED4] hover:text-white transition-colors"
@@ -514,13 +520,8 @@ export default function QuizClient({ onBack }: Props) {
               disabled={!agreedToTerms || saving}
               className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/15 px-6 py-2.5 text-base font-semibold text-white backdrop-blur-md hover:bg-white/25 transition-colors disabled:cursor-not-allowed disabled:opacity-40 shadow-lg"
             >
-              {saving ? (
-                "Submitting…"
-              ) : (
-                <>
-                  Now find me someone perfect <FontAwesomeIcon icon={faHeart} className="text-sm ml-1" />
-                </>
-              )}
+              {saving ? "Submitting…" : "I'm in — find me a match!"}
+              {!saving && <FontAwesomeIcon icon={faCircleChevronRight} className="text-xl" />}
             </button>
           ) : onFinal ? (
             <button
