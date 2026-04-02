@@ -33,7 +33,6 @@ export default function QuizClient({ userId, onBack }: Props) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [attempted, setAttempted] = useState(false);
   const [transition, setTransition] = useState<string | null>("About You");
   const [showReview, setShowReview] = useState(false);
 
@@ -74,8 +73,7 @@ export default function QuizClient({ userId, onBack }: Props) {
       setTransition(null);
       return;
     }
-    if (!canProceed()) { setAttempted(true); return; }
-    setAttempted(false);
+    if (!canProceed()) { return; }
     const nextIndex = currentIndex + 1;
     if (nextIndex >= questions.length) {
       // Last question — go to review
@@ -102,7 +100,6 @@ export default function QuizClient({ userId, onBack }: Props) {
       setCurrentIndex((i) => Math.max(0, i - 1));
       return;
     }
-    setAttempted(false);
     if (currentIndex > 0) {
       setCurrentIndex((i) => i - 1);
     } else if (onBack) {
@@ -526,9 +523,9 @@ function DropdownInput({ question, value, onChange }: {
 
 // ── LocationInput (Google Places API New) ─────────────────────────────────────
 
-function LocationInput({ question, country, city, onCountry, onCity }: {
+function LocationInput({ question, city, onCountry, onCity }: {
   question: QuizQuestion;
-  country: string | undefined;
+  country?: string | undefined;
   city: string | undefined;
   onCountry: (v: string) => void;
   onCity: (v: string) => void;
