@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleChevronLeft, faCircleChevronRight, faCircleCheck, faBug } from "@fortawesome/free-solid-svg-icons";
+import { faCircleChevronLeft, faCircleChevronRight, faCircleCheck, faBug, faHeart } from "@fortawesome/free-solid-svg-icons";
 import { faLinkedin, faWhatsapp, faXTwitter, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { AnimatePresence, motion } from "framer-motion";
 import quizConfig from "@/data/quiz.json";
@@ -514,8 +514,13 @@ export default function QuizClient({ onBack }: Props) {
               disabled={!agreedToTerms || saving}
               className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/15 px-6 py-2.5 text-base font-semibold text-white backdrop-blur-md hover:bg-white/25 transition-colors disabled:cursor-not-allowed disabled:opacity-40 shadow-lg"
             >
-              {saving ? "Submitting…" : "I'm in — find me a match!"}
-              {!saving && <FontAwesomeIcon icon={faCircleChevronRight} className="text-xl" />}
+              {saving ? (
+                "Submitting…"
+              ) : (
+                <>
+                  Now find me someone perfect <FontAwesomeIcon icon={faHeart} className="text-sm ml-1" />
+                </>
+              )}
             </button>
           ) : onFinal ? (
             <button
