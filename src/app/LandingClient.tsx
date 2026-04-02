@@ -100,8 +100,7 @@ export default function LandingClient() {
 
                 {/* Tagline */}
                 <p className="text-lg sm:text-xl text-white/70 max-w-xl mx-auto leading-relaxed">
-                  Get matched with collaborators, mentors, and friends who share your
-                  commitment to AI safety and other high-impact causes.
+                  Next to no impactful projects originated as a one-man show. Get matched with collaborators, mentors, and friends who share your commitment to AI safety and other high-impact causes.
                 </p>
 
                 {/* CTA */}
@@ -131,7 +130,7 @@ export default function LandingClient() {
 
               {/* Scroll indicator */}
               <div className="absolute bottom-8 flex flex-col items-center gap-1.5 text-white/30 text-xs select-none">
-                <span className="tracking-widest uppercase text-[10px]">about</span>
+                <span className="tracking-widest uppercase text-[10px]">tell me more first</span>
                 <FontAwesomeIcon icon={faChevronDown} className="w-3 h-3 animate-bounce" />
               </div>
             </section>
