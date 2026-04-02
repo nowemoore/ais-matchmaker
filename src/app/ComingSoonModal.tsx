@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronDown, faCircleChevronDown, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faCircleChevronDown, faXmark } from "@fortawesome/free-solid-svg-icons";
 
 const ITEMS = [
   {
