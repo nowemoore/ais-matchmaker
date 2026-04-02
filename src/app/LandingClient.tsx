@@ -100,8 +100,7 @@ export default function LandingClient() {
 
                 {/* Tagline */}
                 <p className="text-lg sm:text-xl text-white/70 max-w-xl mx-auto leading-relaxed">
-                  Get matched with collaborators, mentors, and friends who share your
-                  commitment to AI safety and other high-impact causes.
+                  Next to no impactful projects originated as a one-man show. Get matched with collaborators, mentors, and friends who share your commitment to AI safety and other high-impact causes.
                 </p>
 
                 {/* CTA */}
