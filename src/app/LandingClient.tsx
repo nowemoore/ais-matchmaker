@@ -26,16 +26,20 @@ const BG = {
 
 const HOW_IT_WORKS = [
   {
-    title: "Share your profile",
-    body: "Answer a short quiz about your background, priorities, and what you're working on.",
+    title: "Take a Short Quiz",
+    body: "Tell us about your background, priorities, and what you're working on. Won't take >10mins.",
   },
   {
-    title: "Get matched",
-    body: "Our algorithm finds people whose values, skills, and goals align with yours.",
+    title: "Get Matched",
+    body: "Let us find folx whose goals align with yours. We'll send you an email when we find a strong match.",
   },
   {
     title: "Connect",
-    body: "Reach out, collaborate, and grow the ecosystem of people working on what matters most.",
+    body: "We make the introduction, but you need to take it from there. Reach out to your match and get started!",
+  },
+  {
+    title: "Keep an Eye out 👀",
+    body: "New features coming soon to help AIS pros meet the right people and start contributing ASAP.",
   },
 ];
 
