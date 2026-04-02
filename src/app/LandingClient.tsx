@@ -113,12 +113,6 @@ export default function LandingClient() {
                     GET ME PLUGGED
                     <FontAwesomeIcon icon={faChevronCircleRight} className="w-3.5 h-3.5" />
                   </button>
-                  <button
-                    onClick={scrollToAbout}
-                    className="text-sm text-white/35 hover:text-white/60 transition-colors underline underline-offset-4"
-                  >
-                    tell me more
-                  </button>
                 </div>
               </div>
 
@@ -140,7 +134,7 @@ export default function LandingClient() {
                 onClick={scrollToAbout}
                 className="absolute bottom-8 flex flex-col items-center gap-1.5 text-white/30 hover:text-white/50 transition-colors text-xs"
               >
-                <span className="tracking-widest uppercase text-[10px]">about</span>
+                <span className="tracking-widest uppercase text-[10px]">tell me more first</span>
                 <FontAwesomeIcon icon={faChevronDown} className="w-3 h-3 animate-bounce" />
               </button>
             </section>
