@@ -1095,10 +1095,10 @@
     {
       "id": "q_contact",
       "section": "Your Time & Commitment",
-      "text": "How would you like to be contacted?",
-      "hint": "Email is required. Everything else is optional.",
+      "text": "Any other ways you'd like to be contacted?",
+      "hint": "Optional — add any that apply.",
       "type": "contact",
-      "required": true
+      "required": false
     }
   ]
 }
