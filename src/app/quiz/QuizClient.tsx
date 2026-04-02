@@ -277,7 +277,7 @@ export default function QuizClient({ onBack }: Props) {
                       <>
                         I agree to the{" "}
                         <a
-                          href="/terms"
+                          href="https://docs.google.com/document/d/14WvzbqOLjY5WElNTJTp2CIqnLAn9W03H1siGRAJgVsc/edit?usp=sharing"
                           target="_blank"
                           rel="noopener noreferrer"
                           className="underline text-[#AFDED4] hover:text-white transition-colors"
