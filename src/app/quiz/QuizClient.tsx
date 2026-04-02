@@ -23,11 +23,22 @@ const SECTION_TRANSITIONS: Record<string, string> = {
   "Your Time & Commitment": "Almost there — just a couple more.",
 };
 
-interface Props { userId: string; onBack?: () => void; }
+interface Props { onBack?: () => void; }
 
-export default function QuizClient({ userId, onBack }: Props) {
+export default function QuizClient({ onBack }: Props) {
   const router = useRouter();
   const supabase = createClient();
+
+  // Generate a stable anonymous ID for this session
+  const userId = useRef(
+    typeof window !== "undefined"
+      ? (sessionStorage.getItem("anon_id") ?? (() => {
+          const id = crypto.randomUUID();
+          sessionStorage.setItem("anon_id", id);
+          return id;
+        })())
+      : crypto.randomUUID()
+  ).current;
 
   const [answers, setAnswers] = useState<Record<string, AnswerValue>>({});
   const [currentIndex, setCurrentIndex] = useState(0);
