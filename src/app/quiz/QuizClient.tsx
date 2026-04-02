@@ -120,9 +120,15 @@ export default function QuizClient({ onBack }: Props) {
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
-      const tag = (e.target as HTMLElement).tagName;
-      if (tag === "INPUT" || tag === "TEXTAREA") return;
-      if (e.key === "ArrowRight" || e.key === "Enter") handleNext();
+      const el = e.target as HTMLElement;
+      const tag = el.tagName;
+      // Textarea: never intercept (Enter = newline, arrows = cursor)
+      if (tag === "TEXTAREA") return;
+      // Enter always advances from any input (including range sliders)
+      if (e.key === "Enter") { handleNext(); return; }
+      // Arrow keys only navigate when not focused on a text input
+      if (tag === "INPUT") return;
+      if (e.key === "ArrowRight") handleNext();
       if (e.key === "ArrowLeft") handleBack();
     }
     window.addEventListener("keydown", onKey);
@@ -481,7 +487,7 @@ function CustomSelect({ options, value, onChange, placeholder, searchable, compa
       {open && (
         <div
           className="absolute z-50 w-full rounded-b-xl border border-t-0 border-white/15 shadow-xl overflow-hidden"
-          style={{ background: "rgba(11,17,32,0.92)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)" }}
+          style={{ background: "rgba(28,28,28,0.97)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)" }}
         >
           {searchable && (
             <div className="px-3 pt-2 pb-1 border-b border-white/10">
@@ -495,7 +501,7 @@ function CustomSelect({ options, value, onChange, placeholder, searchable, compa
               />
             </div>
           )}
-          <div className="max-h-48 overflow-y-auto py-1">
+          <div className="max-h-48 overflow-y-auto no-scrollbar py-1">
             {filtered.length === 0 && (
               <p className="px-4 py-2.5 text-sm text-white/30">No results</p>
             )}
@@ -609,16 +615,16 @@ function LocationInput({ question, city, onCountry, onCity }: {
         value={query}
         onChange={(e) => handleChange(e.target.value)}
         placeholder="Start typing a city…"
-        className={`${inputClass} ${open && suggestions.length > 0 ? "rounded-b-none" : ""}`}
+        className={inputClass}
         style={glassInputStyle}
         autoComplete="off"
       />
       {open && suggestions.length > 0 && (
         <div
           className="absolute z-50 w-full rounded-b-xl border border-t-0 border-white/15 shadow-xl overflow-hidden"
-          style={{ background: "rgba(11,17,32,0.92)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)" }}
+          style={{ background: "rgba(28,28,28,0.97)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)" }}
         >
-          <div className="max-h-48 overflow-y-auto py-1">
+          <div className="max-h-48 overflow-y-auto no-scrollbar py-1">
             {suggestions.map((s) => (
               <button
                 key={s.placeId}
