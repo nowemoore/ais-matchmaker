@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -20,7 +20,7 @@ const CHIPS = [
 ];
 
 const BG = {
-  background: "radial-gradient(ellipse 120% 80% at 50% 40%, #2a2a2a 0%, #1a1a1a 40%, #0f0f0f 100%)",
+  background: "radial-gradient(circle at 50% 40%, #2a2a2a 0%, #1a1a1a 40%, #0f0f0f 100%)",
   backgroundAttachment: "fixed",
 };
 
@@ -41,6 +41,7 @@ const HOW_IT_WORKS = [
 
 export default function LandingClient() {
   const [showQuiz, setShowQuiz] = useState(false);
+  const aboutRef = useRef<HTMLElement>(null);
 
   // Prevent body/html from scrolling — main handles it
   useEffect(() => {
@@ -48,9 +49,8 @@ export default function LandingClient() {
     return () => { document.body.style.overflow = ""; };
   }, []);
 
-  const handleCTA = () => {
-    setShowQuiz(true);
-  };
+  const handleCTA = () => setShowQuiz(true);
+  const scrollToAbout = () => aboutRef.current?.scrollIntoView({ behavior: "smooth" });
 
   return (
     <main
@@ -100,17 +100,24 @@ export default function LandingClient() {
 
                 {/* Tagline */}
                 <p className="text-lg sm:text-xl text-white/70 max-w-xl mx-auto leading-relaxed">
-                  Next to no impactful projects originated as a one-man show. Get matched with collaborators, mentors, and friends who share your commitment to AI safety and other high-impact causes.
+                  Get matched with collaborators, mentors, and friends who share your
+                  commitment to AI safety and other high-impact causes.
                 </p>
 
                 {/* CTA */}
-                <div className="flex items-center justify-center pt-1">
+                <div className="flex flex-col items-center gap-3 pt-1">
                   <button
                     onClick={handleCTA}
                     className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/15 px-8 py-3.5 text-base font-semibold text-white backdrop-blur-md hover:bg-white/25 transition-colors shadow-lg"
                   >
                     GET ME PLUGGED
                     <FontAwesomeIcon icon={faChevronCircleRight} className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    onClick={scrollToAbout}
+                    className="text-sm text-white/35 hover:text-white/60 transition-colors underline underline-offset-4"
+                  >
+                    tell me more
                   </button>
                 </div>
               </div>
@@ -129,15 +136,18 @@ export default function LandingClient() {
               </div>
 
               {/* Scroll indicator */}
-              <div className="absolute bottom-8 flex flex-col items-center gap-1.5 text-white/30 text-xs select-none">
-                <span className="tracking-widest uppercase text-[10px]">tell me more first</span>
+              <button
+                onClick={scrollToAbout}
+                className="absolute bottom-8 flex flex-col items-center gap-1.5 text-white/30 hover:text-white/50 transition-colors text-xs"
+              >
+                <span className="tracking-widest uppercase text-[10px]">about</span>
                 <FontAwesomeIcon icon={faChevronDown} className="w-3 h-3 animate-bounce" />
-              </div>
+              </button>
             </section>
 
             {/* ── About section ── */}
-            <section className="min-h-screen flex flex-col items-center justify-center px-4 py-24">
-              <div className="max-w-2xl w-full space-y-16">
+            <section ref={aboutRef} className="min-h-screen flex flex-col items-center justify-center px-4 py-24">
+              <div className="max-w-3xl w-full space-y-16">
 
                 <div className="text-center space-y-5">
                   <h2
@@ -155,15 +165,25 @@ export default function LandingClient() {
                   </p>
                 </div>
 
-                <div className="grid sm:grid-cols-3 gap-5">
-                  {HOW_IT_WORKS.map(({ title, body }) => (
-                    <div
-                      key={title}
-                      className="rounded-2xl border border-white/10 bg-white/[0.05] backdrop-blur-sm p-6 space-y-2"
-                    >
-                      <h3 className="text-[#AFDED4] font-semibold text-sm">{title}</h3>
-                      <p className="text-white/50 text-sm leading-relaxed">{body}</p>
-                    </div>
+                {/* How it works — circles with chevrons */}
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                  {HOW_IT_WORKS.map(({ title, body }, i) => (
+                    <>
+                      <div
+                        key={title}
+                        className="w-48 h-48 flex-shrink-0 rounded-full border border-white/10 bg-white/[0.05] backdrop-blur-sm flex flex-col items-center justify-center text-center px-6 gap-2"
+                      >
+                        <h3 className="text-[#AFDED4] font-semibold text-sm leading-tight">{title}</h3>
+                        <p className="text-white/45 text-[11px] leading-relaxed">{body}</p>
+                      </div>
+                      {i < HOW_IT_WORKS.length - 1 && (
+                        <FontAwesomeIcon
+                          key={`chevron-${i}`}
+                          icon={faChevronCircleRight}
+                          className="text-[#AFDED4]/25 text-2xl flex-shrink-0 rotate-90 sm:rotate-0"
+                        />
+                      )}
+                    </>
                   ))}
                 </div>
 
