@@ -34,7 +34,7 @@ export type TagKey =
   // Impact
   | "imp_xrisk" | "imp_research" | "imp_policy" | "imp_community" | "imp_talent" | "imp_funding" | "imp_narratives" | "imp_tools" | "imp_institutions" | "imp_near_term"
   // Skills
-  | "skill_ml" | "skill_interp" | "skill_writing" | "skill_policy" | "skill_fundraising" | "skill_ops" | "skill_mentoring" | "skill_community" | "skill_philosophy" | "skill_economics" | "skill_legal" | "skill_software" | "skill_data" | "skill_design"
+  | "skill_ml" | "skill_interp" | "skill_writing" | "skill_policy" | "skill_advocacy" | "skill_fundraising" | "skill_ops" | "skill_mentoring" | "skill_community" | "skill_philosophy" | "skill_economics" | "skill_legal" | "skill_software" | "skill_data" | "skill_design"
   | "skill_swe" | "skill_comms" | "skill_events" | "skill_research" | "skill_stats" | "skill_cybersec"
   // Bottlenecks
   | "need_collaborators" | "need_funding" | "need_time" | "need_skills" | "need_direction" | "need_feedback" | "need_network" | "need_motivation"
