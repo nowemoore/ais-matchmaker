@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleChevronLeft, faCircleChevronRight, faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { faLinkedin, faWhatsapp, faXTwitter, faInstagram } from "@fortawesome/free-brands-svg-icons";
@@ -26,7 +25,6 @@ const SECTION_TRANSITIONS: Record<string, string> = {
 interface Props { onBack?: () => void; }
 
 export default function QuizClient({ onBack }: Props) {
-  const router = useRouter();
   const supabase = createClient();
 
   // Generate a stable anonymous ID for this session
@@ -48,6 +46,11 @@ export default function QuizClient({ onBack }: Props) {
   const [showReview, setShowReview] = useState(false);
   const [checkingEmail, setCheckingEmail] = useState(false);
   const [showReturningUser, setShowReturningUser] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [showBugReport, setShowBugReport] = useState(false);
+  const [bugMessage, setBugMessage] = useState("");
+  const [bugSending, setBugSending] = useState(false);
+  const [bugSent, setBugSent] = useState(false);
 
   // Review screen checkbox states
   const [agreedToTerms, setAgreedToTerms] = useState(false);
@@ -173,8 +176,19 @@ export default function QuizClient({ onBack }: Props) {
       { onConflict: "user_id" }
     );
     if (dbError) { setError(dbError.message); setSaving(false); return; }
-    router.push("/matches");
-    router.refresh();
+    setShowSuccess(true);
+  }
+
+  async function handleSendBugReport() {
+    if (!bugMessage.trim()) return;
+    setBugSending(true);
+    await fetch("/api/report-bug", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: bugMessage, page: typeof window !== "undefined" ? window.location.pathname : "/quiz" }),
+    });
+    setBugSending(false);
+    setBugSent(true);
   }
 
   const onFinal = currentIndex === questions.length - 1;
@@ -191,8 +205,8 @@ export default function QuizClient({ onBack }: Props) {
     );
     setSaving(false);
     if (dbError) { setError(dbError.message); return; }
-    router.push("/matches");
-    router.refresh();
+    setShowReturningUser(false);
+    setShowSuccess(true);
   }
 
   return (
@@ -202,6 +216,65 @@ export default function QuizClient({ onBack }: Props) {
         background: "radial-gradient(ellipse 120% 80% at 50% 40%, #2a2a2a 0%, #1a1a1a 40%, #0f0f0f 100%)",
       }}
     >
+      {/* Bug report button */}
+      <button
+        onClick={() => { setShowBugReport(true); setBugMessage(""); setBugSent(false); }}
+        className="fixed top-4 right-4 z-50 flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-white/40 hover:text-white/70 hover:border-white/30 transition-colors backdrop-blur-md"
+      >
+        <span>🐛</span> report bug
+      </button>
+
+      {/* Bug report modal */}
+      {showBugReport && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowBugReport(false)} />
+          <div
+            className="relative w-full max-w-sm rounded-2xl border border-white/15 p-6 space-y-4 shadow-2xl"
+            style={{ background: "rgba(28,28,28,0.97)" }}
+          >
+            <h3 className="text-base font-semibold text-white">What seems to be the problem?</h3>
+            {bugSent ? (
+              <div className="text-center py-4">
+                <p className="text-sm text-[#AFDED4]">Thanks for the report! We will look into it.</p>
+                <button
+                  onClick={() => setShowBugReport(false)}
+                  className="mt-4 text-sm text-white/40 hover:text-white/70 transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+            ) : (
+              <>
+                <textarea
+                  rows={4}
+                  value={bugMessage}
+                  onChange={(e) => setBugMessage(e.target.value)}
+                  placeholder="Describe the bug — what happened and what you expected instead…"
+                  className={textareaClass}
+                  style={glassInputStyle}
+                  autoFocus
+                />
+                <div className="flex justify-end gap-3">
+                  <button
+                    onClick={() => setShowBugReport(false)}
+                    className="text-sm text-white/40 hover:text-white/70 transition-colors px-3 py-1.5"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSendBugReport}
+                    disabled={!bugMessage.trim() || bugSending}
+                    className="rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-sm font-medium text-white hover:bg-white/20 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    {bugSending ? "Sending…" : "Send"}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
       <div className="w-full max-w-xl space-y-6">
 
         {/* Progress */}
@@ -224,7 +297,26 @@ export default function QuizClient({ onBack }: Props) {
           style={{ height: "22rem", background: "rgba(255,255,255,0.06)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)" }}
         >
           <AnimatePresence mode="wait">
-            {showReturningUser ? (
+            {showSuccess ? (
+              <motion.div
+                key="success"
+                className="flex-1 flex flex-col items-center justify-center text-center gap-4"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+              >
+                <div
+                  className="text-3xl font-bold"
+                  style={{ color: "#AFDED4", textShadow: "0 0 40px rgba(175,222,212,0.4)" }}
+                >
+                  You&apos;re in!
+                </div>
+                <p className="text-white/70 text-sm leading-relaxed max-w-xs">
+                  Thanks for joining — we are really glad you are here. We will be in touch as soon as we find a strong match for you.
+                </p>
+                <p className="text-white/30 text-xs">Keep doing great work until then.</p>
+              </motion.div>
+            ) : showReturningUser ? (
               <motion.div
                 key="returning-user"
                 className="flex-1 flex flex-col items-center justify-center text-center gap-5"
@@ -395,7 +487,7 @@ export default function QuizClient({ onBack }: Props) {
         </div>
 
         {/* Navigation */}
-        <div className="flex items-center justify-center gap-6">
+        <div className={`flex items-center justify-center gap-6 ${showSuccess ? "invisible" : ""}`}>
           <button
             onClick={handleBack}
             disabled={!showReview && !showReturningUser && currentIndex === 0}
@@ -410,7 +502,7 @@ export default function QuizClient({ onBack }: Props) {
               disabled={!agreedToTerms || saving}
               className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/15 px-6 py-2.5 text-base font-semibold text-white backdrop-blur-md hover:bg-white/25 transition-colors disabled:cursor-not-allowed disabled:opacity-40 shadow-lg"
             >
-              {saving ? "Submitting…" : "Find My Matches"}
+              {saving ? "Submitting…" : "I'm in — find me a match!"}
               {!saving && <FontAwesomeIcon icon={faCircleChevronRight} className="text-xl" />}
             </button>
           ) : onFinal ? (
