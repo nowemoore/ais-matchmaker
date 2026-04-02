@@ -185,7 +185,7 @@ export default function LandingClient() {
                     onClick={handleCTA}
                     className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/15 px-8 py-3.5 text-base font-semibold text-white backdrop-blur-md hover:bg-white/25 transition-colors shadow-lg"
                   >
-                    GET ME PLUGGED
+                    TAKE A QUIZ
                     <FontAwesomeIcon icon={faChevronCircleRight} className="w-3.5 h-3.5" />
                   </button>
                 </div>
