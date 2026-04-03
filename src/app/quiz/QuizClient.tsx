@@ -19,7 +19,7 @@ const SECTION_TRANSITIONS: Record<string, string> = {
   "Your Priorities":        "Now, what drives you?",
   "Your Idea":              "Tell us about what you're working on.",
   "Your Background & Vibe": "A little about who you are.",
-  "Your Time & Commitment": "Almost there — just a couple more.",
+  "Your Time & Commitment": "Almost there; just a few more.",
 };
 
 interface Props { onBack?: () => void; }
