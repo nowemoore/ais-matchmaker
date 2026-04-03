@@ -421,10 +421,10 @@ export default function QuizClient({ onBack }: Props) {
                 <div>
                   <h2 className="text-xl font-semibold text-white">Welcome back!</h2>
                   <p className="text-sm text-white/50 mt-1.5">
-                    We found an existing profile for <span className="text-[#AFDED4]">{answers["q_email"] as string}</span>.
+                    We found an existing profile for <span className="text-[#AFDED4]">{answers["q_email"] as string}</span>, and we're working to find you the right match ASAP. If this doesn't seem right or you want to update your preferences, please contact Nowe at <a href="mailto:nowe.moore@gmail.com" className="underline text-[#AFDED4] hover:text-white/70 transition-colors">nowe.moore@gmail.com</a>. We are working to make this process smoother in the future, cheers for your patience! 🫶
                   </p>
                 </div>
-                <div className="flex flex-col gap-3 w-full">
+                {/* <div className="flex flex-col gap-3 w-full">
                   <button
                     onClick={handleMatchMeNow}
                     disabled={saving}
@@ -439,7 +439,7 @@ export default function QuizClient({ onBack }: Props) {
                   >
                     {sendingCode ? "Sending code…" : "Update my preferences"}
                   </button>
-                </div>
+                </div> */}
                 {error && <p className="text-sm text-red-300">{error}</p>}
               </motion.div>
             ) : showReview ? (
