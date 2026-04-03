@@ -20,7 +20,7 @@ const CHIPS = [
 ];
 
 const BG = {
-  background: "radial-gradient(circle at 50% 40%, #2a2a2a 0%, #1a1a1a 40%, #0f0f0f 100%)",
+  background: "radial-gradient(circle at 50% 40%, #232323 0%, #0d0d0d 40%, #000000 100%)",
   backgroundAttachment: "fixed",
 };
 
