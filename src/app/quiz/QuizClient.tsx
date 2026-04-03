@@ -241,21 +241,6 @@ export default function QuizClient({ onBack }: Props) {
   const onFinal = currentIndex === questions.length - 1;
   const isDropdownQ = !transition && (question.type === "dropdown" || question.type === "location");
 
-  async function handleMatchMeNow() {
-    setSaving(true);
-    setError(null);
-    const finalAnswers = { ...answers, _notify_updates: "no", _send_copy: "no" };
-    const tagVector = buildTagVector(config, finalAnswers);
-    const { error: dbError } = await supabase.from("quiz_responses").upsert(
-      { user_id: userId, answers: finalAnswers, tag_vector: tagVector },
-      { onConflict: "user_id" }
-    );
-    setSaving(false);
-    if (dbError) { setError(dbError.message); return; }
-    setShowReturningUser(false);
-    setShowSuccess(true);
-  }
-
   return (
     <main
       className="relative min-h-screen flex flex-col items-center justify-center px-4 py-16 text-white overflow-hidden"

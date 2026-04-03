@@ -6,7 +6,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faShield, faBrain, faLandmark, faGlobe, faCompass, faChevronCircleRight, faChevronDown, faHouse,
   faDragon,
-  faChevronCircleLeft,
   faCirclePlay,
 } from "@fortawesome/free-solid-svg-icons";
 import QuizClient from "./quiz/QuizClient";
