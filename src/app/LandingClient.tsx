@@ -39,7 +39,7 @@ const HOW_IT_WORKS = [
     body: "We make the introduction, but you need to take it from there. Reach out to your match and get started!",
   },
   {
-    title: "Keep an Eye out 👀",
+    title: "Watch for More 👀",
     body: "New features coming soon to help AIS pros meet the right people and start contributing ASAP.",
   },
 ];
