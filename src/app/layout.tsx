@@ -5,9 +5,9 @@ import "@fortawesome/fontawesome-svg-core/styles.css";
 config.autoAddCss = false;
 
 export const metadata: Metadata = {
-  title: "Effective Matching",
+  title: "Faisbook",
   description:
-    "Connect with people who share your passion for AI safety, biosecurity, and effective altruism.",
+    "Find people who share your passion for AI safety.",
 };
 
 export default function RootLayout({
