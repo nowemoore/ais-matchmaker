@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faShield, faBrain, faLandmark, faGlobe, faCompass, faChevronCircleRight, faChevronDown, faHouse,
   faDragon,
+  faCirclePlay,
 } from "@fortawesome/free-solid-svg-icons";
 import QuizClient from "./quiz/QuizClient";
 import RotatingQuestion from "./RotatingQuestion";
@@ -20,7 +21,7 @@ const CHIPS = [
 ];
 
 const BG = {
-  background: "radial-gradient(circle at 50% 40%, #2a2a2a 0%, #1a1a1a 40%, #0f0f0f 100%)",
+  background: "radial-gradient(circle at 50% 40%, #232323 0%, #0d0d0d 40%, #000000 100%)",
   backgroundAttachment: "fixed",
 };
 
@@ -89,12 +90,29 @@ export default function LandingClient() {
                 <div className="flex justify-center my-14">
                   <div className="relative">
                     <h1
-                      className="text-6xl sm:text-7xl tracking-tight leading-none"
+                      className="text-6xl sm:text-7xl tracking-tighter leading-none flex items-center justify-center"
                       style={{ fontFamily: "'Boldonse', system-ui" }}
                     >
                       <span style={{ color: "#AFDED4" }}>F</span>
                       <span className="text-white">AIS</span>
-                      <span style={{ color: "#AFDED4" }}>BOOK</span>
+
+                      <span style={{ color: "#AFDED4" }} className="flex items-center">
+                        <span className="-ml-[0em]">B</span>
+                        
+                        {/* First Play Button */}
+                        <FontAwesomeIcon 
+                          icon={faCirclePlay} 
+                          className="text-[1.25em] -mx-[0.1em] -translate-y-[0.02em]" 
+                        />
+                        
+                        {/* Second Play Button - Rotated and Shifted Up */}
+                        <FontAwesomeIcon 
+                          icon={faCirclePlay} 
+                          className="text-[1.25em] -mx-[0.1em] rotate-180 -translate-y-[0.02em]" 
+                        />
+                        
+                        <span>K</span>
+                      </span>
                     </h1>
                     <span className="absolute bottom-0 left-full ml-2 inline-flex items-center rounded-full border border-[#5c9d8b]/50 bg-[#354b45]/10 px-3 py-0.5 text-xl font-medium text-[#5c9d8b] backdrop-blur-sm tracking-normal">
                       v1.0
